@@ -1,5 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true }
-})
+  devtools: { enabled: true },
+  runtimeConfig: {
+    public: {
+      directusUrl: '',
+      superAdminRoleId: '',
+      adminRoleId: '',
+      moderatorRoleId: '',
+      userRoleId: '',
+    }
+  },
+  routeRules: {
+  "/directus/**": { proxy: `${import.meta.env.NUXT_PUBLIC_DIRECTUS_URL}/**`
+    } 
+  },
+}
+)
