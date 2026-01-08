@@ -5,6 +5,15 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       directusUrl: '',
+      superAdminRoleId: '',
+      adminRoleId: '',
+      moderatorRoleId: '',
+      userRoleId: '',
     }
-  }
-})
+  },
+  routeRules: {
+  "/directus/**": { proxy: `${import.meta.env.NUXT_PUBLIC_DIRECTUS_URL}/**`
+    } 
+  },
+}
+)
