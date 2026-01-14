@@ -5,51 +5,56 @@ import {
   registerUser,
   refresh,
   readMe,
-  type AuthenticationStorage
 } from '@directus/sdk';
 import type { Schema } from '~/../types/directus';
 
 export default defineNuxtPlugin(() => {
-  class NuxtCookieStorage {
-    cookie = useCookie('directus-data')
-    get() {
-      return this.cookie.value
-    }
-    set(data: any) {
-      this.cookie.value = data
-    }
-  }
+  const headers = useRequestHeaders(['cookie'])
+  const user = useDirectusUser()
+  const directus = createDirectus<Schema>('http://localhost:8055')
+    .with(authentication("session", {credentials: "include"}))
+    .with(rest({ 
+      onRequest: (options) => {
+        if (headers.cookie) {
+          options.headers = {
+            ...options.headers,
+            cookie: headers.cookie,
+          };
+        }
+        options.credentials = 'include';
+        options.cache = 'no-store';
+        return options;
+      }
+    }));
 
-  const storage = new NuxtCookieStorage() as AuthenticationStorage
-
-  const config = useRuntimeConfig();
-  const directus = createDirectus<Schema>('http://localhost:3000/directus')
-    .with(authentication("cookie", { credentials: "include", storage }))
-    .with(rest({ credentials: "include" }));
-
-  const isAuthenticated = async () => {
-    try {
-      const me = await directus.request(readMe());
-      return me;
-    } catch (error) {
-      return false;
-    }
-  };
+  const fetchUser = async () => {
+        try {
+            const me = await directus.request(readMe());
+            user.value = me; 
+            return me;
+        } catch (e) {
+            user.value = null;
+            return null;
+        }
+    };
 
   const refreshToken = async () => {
     return directus.request(
-      refresh({ mode: 'cookie' })
+      refresh({ mode: 'session' })
     );
   };
 
   const logout = async () => {
-    await directus.logout({mode: 'session'})
+    try {
+      await directus.logout({mode: "session"})
+      user.value = null
+    } catch (e) {}
     return navigateTo('/')
   }
 
   return {
     provide: {
-      directus, registerUser, readMe, isAuthenticated, refreshToken, logout
+      directus, registerUser, readMe, fetchUser, refreshToken, logout
     }
   };
 });
