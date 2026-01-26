@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col min-h-screen">
+  <div class="min-h-screen flex flex-col">
     <NuxtRouteAnnouncer />
     <appNav />
     <NuxtPage class="flexgrow"/>
