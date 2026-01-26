@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+
   runtimeConfig: {
     public: {
       directusUrl: '',
@@ -11,9 +12,12 @@ export default defineNuxtConfig({
       userRoleId: '',
     }
   },
+
   routeRules: {
   "/directus/**": { proxy: `${import.meta.env.NUXT_PUBLIC_DIRECTUS_URL}/**`
     } 
   },
+
+  modules: ["@nuxtjs/tailwindcss", "@nuxt/image"],
 }
 )
