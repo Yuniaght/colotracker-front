@@ -8,12 +8,12 @@ import {
 } from '@directus/sdk';
 import type { Schema } from '~/../types/directus';
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin(async (nuxtApp) => {
   const headers = useRequestHeaders(['cookie'])
   const user = useDirectusUser()
   const directus = createDirectus<Schema>('http://localhost:8055')
-    .with(authentication("session", {credentials: "include"}))
-    .with(rest({ 
+    .with(authentication("session", { credentials: "include" }))
+    .with(rest({
       onRequest: (options) => {
         if (headers.cookie) {
           options.headers = {
@@ -28,15 +28,20 @@ export default defineNuxtPlugin(() => {
     }));
 
   const fetchUser = async () => {
-        try {
-            const me = await directus.request(readMe());
-            user.value = me; 
-            return me;
-        } catch (e) {
-            user.value = null;
-            return null;
-        }
-    };
+    if (user.value) return user.value
+    try {
+      const me = await directus.request(readMe());
+      user.value = me;
+      return me;
+    } catch (e) {
+      user.value = null;
+      return null;
+    }
+  };
+
+  if (!user.value) {
+    await fetchUser()
+  }
 
   const refreshToken = async () => {
     return directus.request(
@@ -46,9 +51,9 @@ export default defineNuxtPlugin(() => {
 
   const logout = async () => {
     try {
-      await directus.logout({mode: "session"})
+      await directus.logout({ mode: "session" })
       user.value = null
-    } catch (e) {}
+    } catch (e) { }
     return navigateTo('/')
   }
 
