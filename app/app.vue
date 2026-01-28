@@ -2,7 +2,9 @@
   <div class="min-h-screen flex flex-col">
     <NuxtRouteAnnouncer />
     <appNav />
-    <NuxtPage class="flexgrow"/>
+    <main  class="flexgrow">
+      <NuxtPage />
+    </main>
     <appFooter />
   </div>
 </template>

@@ -5,6 +5,10 @@ import {
   registerUser,
   refresh,
   readMe,
+  readItems,
+  readItem,
+  readUsers,
+  readUser,
 } from '@directus/sdk';
 import type { Schema } from '~/../types/directus';
 
@@ -59,7 +63,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   return {
     provide: {
-      directus, registerUser, readMe, fetchUser, refreshToken, logout
+      directus, registerUser, readMe, readItems, readItem, readUsers, readUser, fetchUser, refreshToken, logout
     }
   };
 });

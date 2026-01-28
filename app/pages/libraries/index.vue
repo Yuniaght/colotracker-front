@@ -1,0 +1,25 @@
+<template>
+  <div>
+    <ul>
+      <li v-for="user in users"><appLink :to='`/libraries/${user.slug}`'>{{ user.user_name }}</appLink></li>
+    </ul>
+  </div>
+</template>
+
+<script setup lang="ts">
+const { $directus, $readUsers } = useNuxtApp()
+
+const { data: users } = await useAsyncData('users-list', () => {
+  return $directus.request(
+    $readUsers({
+      fields: ['user_name', "slug", 'avatar'],
+      sort: ['-user_name'],
+      filter: {
+        _and: [
+          { status: { _eq: "active" } }
+        ]
+      }
+    })
+  )
+})
+</script>

@@ -19,5 +19,11 @@ export default defineNuxtConfig({
   },
 
   modules: ["@nuxtjs/tailwindcss", "@nuxt/image"],
+
+  image: {
+    directus: {
+      baseURL: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/assets`,
+    }
+  },
 }
 )

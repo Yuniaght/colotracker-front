@@ -29,6 +29,7 @@ export interface Book {
 	store_link?: string | null;
 	author?: Author | string | null;
 	category_list?: BooksCategoryList[] | string[];
+	slug?: string
 }
 
 export interface BooksCategoryList {
@@ -91,6 +92,7 @@ export interface DirectusUser {
 	moderated_count?: number | null;
 	joined_at?: string | null;
 	policies?: DirectusAccess[] | string[];
+	slug?: string
 }
 
 export interface Library {
@@ -98,6 +100,7 @@ export interface Library {
 	id: number;
 	user?: DirectusUser | string | null;
 	book?: Book | string | null;
+	completed_pages?: CompletedPages[] | number[] | string[] | null
 }
 
 export interface Message {
