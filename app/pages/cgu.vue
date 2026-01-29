@@ -1,1 +1,5 @@
-<template></template>
+<template>
+  <div>
+    cgu
+  </div>
+</template>

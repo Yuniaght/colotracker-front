@@ -1,20 +1,22 @@
 <template>
-    <form @submit.prevent="login">
-        <h1>Login</h1>
-        <div v-if="errorMsg">
-            <p>{{ errorMsg }}</p>
-        </div>
-        <div>
-            <input required type="text" v-model="email" name="email" placeholder="Email" />
-        </div>
-        <div>
-            <input required type="password" v-model="password" name="password" placeholder="Password" />
-        </div>
-        <button type="submit">Login</button>
-    </form>
+    <div>
+        <form @submit.prevent="login">
+            <h1>Login</h1>
+            <div v-if="errorMsg">
+                <p>{{ errorMsg }}</p>
+            </div>
+            <div>
+                <input required type="text" v-model="email" name="email" placeholder="Email" />
+            </div>
+            <div>
+                <input required type="password" v-model="password" name="password" placeholder="Password" />
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 </template>
 
-<script setup lang="js">
+<script setup lang="ts">
 const { $directus } = useNuxtApp()
 const router = useRouter()
 
@@ -32,4 +34,3 @@ const login = async () => {
     }
 }
 </script>
-

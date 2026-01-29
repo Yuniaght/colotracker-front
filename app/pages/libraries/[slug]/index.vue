@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <h2 class="text-2xl">{{ user?.user_name }}</h2>
+      <h1 class="text-3xl">Trackers de : {{ user?.user_name }}</h1>
       <p v-if="user?.joined_at">Membre depuis :
         <NuxtTime :datetime="user?.joined_at" />
       </p>
@@ -14,10 +14,11 @@
       <div>
         <h2 class="text-2xl">Collection</h2>
         <div>
-          <div v-for="book in library">
+          <div v-for="book in library" :key="book.id">
             <appLink :to='`/libraries/${user?.slug}/${book?.id}-${book.book.slug}`'>
               <h3>{{ book.book?.name }}</h3>
-              <p>{{ book.completed_pages.length }} / {{ book.book?.page_count }} - {{ calculateProgress(book.completed_pages.length, book.book?.page_count) }}</p>
+              <p>{{ book.completed_pages.length }} / {{ book.book?.page_count }} - {{
+                calculateProgress(book.completed_pages.length, book.book?.page_count) }}</p>
             </appLink>
           </div>
         </div>

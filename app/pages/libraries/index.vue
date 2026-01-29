@@ -1,7 +1,10 @@
 <template>
   <div>
+    <h1 class="text-3xl">Liste des utilisateurs</h1>
     <ul>
-      <li v-for="user in users"><appLink :to='`/libraries/${user.slug}`'>{{ user.user_name }}</appLink></li>
+      <li v-for="user in users" :key="user.slug">
+        <appLink :to='`/libraries/${user.slug}`'>{{ user.user_name }}</appLink>
+      </li>
     </ul>
   </div>
 </template>
