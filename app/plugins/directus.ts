@@ -2,6 +2,7 @@ import {
   createDirectus,
   rest,
   authentication,
+  createUser,
   registerUser,
   refresh,
   readMe,
@@ -10,7 +11,7 @@ import {
   readUsers,
   readUser,
 } from '@directus/sdk';
-import type { Schema } from '~/../types/directus';
+import type { Schema } from '~~/shared/types/directus';
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   const headers = useRequestHeaders(['cookie'])
@@ -63,7 +64,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   return {
     provide: {
-      directus, registerUser, readMe, readItems, readItem, readUsers, readUser, fetchUser, refreshToken, logout
+      directus, registerUser, createUser, readMe, readItems, readItem, readUsers, readUser, fetchUser, refreshToken, logout
     }
   };
 });

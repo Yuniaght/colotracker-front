@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Library, Book } from '~/../types/directus';
+import type { Library, Book } from '~~/shared/types/directus';
 type EnrichedLibraryItem = Library & {
   book: Book;
   completed_pages: { id: number }[];
