@@ -1,11 +1,11 @@
 import { createUser, uploadFiles } from '@directus/sdk';
-import { registerRegistry, useRegisterAttributes } from '~~/server/utils/composables/useRegistrationAttributes';
+import { registrationFormConfig } from '~~/server/utils/composables/useRegistrationAttributes';
 import {parseMultiPartData, splitBodyFiles} from "~~/server/utils/composables/parseMultiPartData";
 import * as z from 'zod';
 import type {ZodError} from "zod";
 
 export default defineEventHandler(async (event) => {
-    const form = useRegisterAttributes('registration');
+    const form = registrationFormConfig;
 
     const directus = useDirectusAdmin(); 
     
@@ -28,11 +28,9 @@ export default defineEventHandler(async (event) => {
     } else {
         body = await readBody(event);
     }
-    console.log(body)
     const vBody = await form.schema.body.safeParseAsync(body);
     
     if (!vBody.success) {
-      console.log("DÉTAILS DE L'ERREUR ZOD :", JSON.stringify(vBody.error.format(), null, 2));
         throw createError({
             message: "Données invalides",
             statusCode: 400,

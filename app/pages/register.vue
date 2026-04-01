@@ -1,22 +1,15 @@
 <script setup lang="ts">
-const { $directus, $createUser } = useNuxtApp()
 import {serialize} from 'object-to-formdata'
 import {toTypedSchema} from "@vee-validate/zod";
-import {formSchema, type FormValues, registrationFields} from '~/components/Form/schema'
+import {registrationSchema, type RegistrationFormValues} from '~/components/Form/registrationSchema'
 import * as zod from 'zod'
 
 const result = ref()
 
-const validationSchema =  toTypedSchema(zod.object({
-  type: zod.literal('registration'),
-  ...registrationFields
-}))
+const validationSchema =  toTypedSchema(registrationSchema)
 
-const { values: formValues, handleSubmit, setFieldValue, resetForm } = useForm<FormValues>({
-  validationSchema,
-  initialValues: {
-    type: 'registration'
-  }
+const { values: formValues, handleSubmit, setFieldValue, resetForm } = useForm<RegistrationFormValues>({
+  validationSchema
 })
 
 const submitForm = handleSubmit(async (values) => {
@@ -25,7 +18,6 @@ const submitForm = handleSubmit(async (values) => {
     const payloadBody = (values.avatar && values.avatar.length > 0)
         ? serialize({ ...values})
         : { ...values }
-        console.log(payloadBody)
     
     await $fetch('/api/register', {
       method: 'POST',

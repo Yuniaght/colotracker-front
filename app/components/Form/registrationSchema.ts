@@ -6,10 +6,6 @@ export const registrationFields = {
   avatar: zod.array(zod.file().max(maxSize).mime(allowedTypes)).max(maxFiles).default([]).optional()
 }
 
-const registrationSchema = zod.object({type: zod.literal("registration"), ...registrationFields})
+export const registrationSchema = zod.object(registrationFields)
 
-export const formSchema = zod.discriminatedUnion('type', [
-  registrationSchema
-])
-
-export type FormValues = zod.infer<typeof formSchema>
+export type RegistrationFormValues = zod.infer<typeof registrationSchema>

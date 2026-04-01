@@ -56,10 +56,9 @@ export function zMultipleFilesConstructor(options?: {
 }
 
 export function defineForm<
-    const Key extends string,
     Body extends AnyZodObject,
     Query extends AnyZodObject | undefined = undefined,
     Headers extends AnyZodObject | undefined = undefined
->(args: Form<Key, Body, Query, Headers>) {
+>(args: Form<Body, Query, Headers>) {
     return args;
 }
