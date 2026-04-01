@@ -3,6 +3,7 @@ import { registrationFormConfig } from '~~/server/utils/composables/useRegistrat
 import {parseMultiPartData, splitBodyFiles} from "~~/server/utils/composables/parseMultiPartData";
 import * as z from 'zod';
 import type {ZodError} from "zod";
+import { glob } from 'node:fs';
 
 export default defineEventHandler(async (event) => {
     const form = registrationFormConfig;
@@ -27,7 +28,7 @@ export default defineEventHandler(async (event) => {
         }
     } else {
         body = await readBody(event);
-    }
+    }   
     const vBody = await form.schema.body.safeParseAsync(body);
     
     if (!vBody.success) {
@@ -65,12 +66,41 @@ export default defineEventHandler(async (event) => {
         };
 
     } catch (e: any) {
-        const errorMessage = e.errors?.[0]?.message || e.message;
         console.error("Erreur Directus:", e);
-        
+
+        let globalMsg = "Une erreur est survenue lors de l'inscription.";
+        let fieldError: Record<string, string[]> = {};
+
+        const directusError = e.errors?.[0];
+
+        if (directusError) {
+            const code = directusError.extensions?.code;
+            const rawMessage = directusError.message || "";
+
+            if (code === 'RECORD_NOT_UNIQUE' || rawMessage.includes('unique')) {
+                
+                // Si l'erreur concerne l'email
+                if (rawMessage.includes('email')) {
+                    globalMsg = "Cet e-mail est déjà utilisé.";
+                    fieldError = { email: ["Cet e-mail est déjà utilisé."] };
+                } 
+                // Si l'erreur concerne le nom d'utilisateur
+                else if (rawMessage.includes('user_name')) {
+                    globalMsg = "Ce nom d'utilisateur est déjà pris.";
+                    fieldError = { user_name: ["Ce nom d'utilisateur est déjà pris."] };
+                } 
+                else {
+                    globalMsg = "Cette information est déjà utilisée.";
+                }
+            } else {
+                globalMsg = rawMessage;
+            }
+        }
+
         throw createError({
-            message: errorMessage || "Erreur lors de l'enregistrement",
-            statusCode: e.status || 500
+            statusCode: 400,
+            message: globalMsg,
+            data: fieldError   
         });
     }
 });
