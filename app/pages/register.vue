@@ -1,39 +1,68 @@
+<script setup lang="ts">
+import {serialize} from 'object-to-formdata'
+import {toTypedSchema} from "@vee-validate/zod";
+import {registrationSchema, type RegistrationFormValues} from '~/components/Form/registrationSchema'
+import * as zod from 'zod'
+
+const registrationStatus = ref<{ type: 'idle' | 'success' | 'error', message?: string }>({ 
+  type: 'idle' 
+})
+
+const validationSchema =  toTypedSchema(registrationSchema)
+
+const { values: formValues, handleSubmit, setFieldValue, resetForm, setErrors } = useForm<RegistrationFormValues>({
+  validationSchema
+})
+
+const submitForm = handleSubmit(async (values) => {
+
+  registrationStatus.value = { type: 'idle' }
+
+  try {
+    const payloadBody = (values.avatar && values.avatar.length > 0)
+        ? serialize({ ...values})
+        : { ...values }
+    
+    const response = await $fetch('/api/register', {
+      method: 'POST',
+      body: payloadBody
+    })
+
+    registrationStatus.value = { 
+      type: 'success', 
+      message: response.message || 'Inscription réussie !' 
+    }
+
+    resetForm()
+
+  } catch (e: any) {
+
+    const errorMessage = e.data?.message || "Une erreur inattendue est survenue."
+    
+    registrationStatus.value = { 
+      type: 'error', 
+      message: errorMessage 
+    }
+    if (e.data?.data) {
+       setErrors(e.data.data) 
+    }
+  }
+
+}) 
+</script>
+
 <template>
-  <div>
-    <form @submit.prevent="register">
-      <h1>S'inscrire</h1>
-      <div v-if="result">
-        <p>Successfully registered</p>
-      </div>
-      <div>
-        <label for="Email">Votre Email</label>
-        <input required type="text" v-model="email" name="email" placeholder="Email" />
-      </div>
-      <div>
-        <label for="password">Votre mot de passe</label>
-        <input required type="password" v-model="password" name="password" placeholder="Mot de passe" />
-      </div>
-      <button type="submit">S'inscrire</button>
+  <div class="px-12 py-6">
+    <h1 class="text-2xl">Rejoignez Colotracker</h1>
+    <div v-if="registrationStatus.type === 'success'" class="p-4 mb-4 text-green-700 bg-green-100 rounded">
+      <p>{{ registrationStatus.message }}</p>
+    </div>
+    
+    <div v-if="registrationStatus.type === 'error'" class="p-4 mb-4 text-red-700 bg-red-100 rounded">
+      <p>{{ registrationStatus.message }}</p>
+    </div>
+    <form @submit.prevent="submitForm">
+      <FormRegistration />
     </form>
   </div>
 </template>
-
-<script setup lang="ts">
-const { $directus, $registerUser } = useNuxtApp()
-
-const email = ref('')
-const password = ref('')
-const result = ref(false)
-
-const register = async () => {
-  try {
-    await $directus.request($registerUser(email.value, password.value))
-    result.value = true
-    password.value = ''
-  } catch (error) {
-    console.error(error)
-    result.value = false
-    password.value = ''
-  }
-}
-</script>
