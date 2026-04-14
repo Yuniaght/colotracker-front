@@ -1,14 +1,3 @@
-<template>
-  <div class="min-h-screen flex flex-col overflow-hidden">
-    <NuxtRouteAnnouncer />
-    <appNav />
-    <main class="flexgrow responsive-menu-padding-t">
-      <NuxtPage />
-    </main>
-    <appFooter />
-  </div>
-</template>
-
 <script setup lang="ts">
 const {public: {directusUrl: directusUrl}} = useRuntimeConfig();
 
@@ -28,3 +17,14 @@ useHead({
   ],
 })
 </script>
+
+<template>
+  <div class="min-h-screen flex flex-col overflow-hidden">
+    <NuxtRouteAnnouncer />
+    <appNav />
+    <main class="flexgrow responsive-menu-padding-t">
+      <NuxtPage />
+    </main>
+    <appFooter />
+  </div>
+</template>

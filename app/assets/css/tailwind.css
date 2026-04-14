@@ -3,10 +3,10 @@
 @import "./base/default.css";
 @import "./components/texts.css";
 @import "./components/layout.css";
+@import "./components/button.css"; 
 
 @theme {
     /*Colors*/
-    --color-*: initial;
     --color-inherit: inherit;
     --color-transparent: transparent;
     --current: currentColor;
