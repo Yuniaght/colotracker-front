@@ -1,0 +1,23 @@
+.responsive-layout {
+    @apply mx-auto w-full xl:max-w-350;
+}
+
+.responsive-padding-x {
+    @apply px-6 sm:px-12 xl:px-36;
+}
+
+.responsive-padding-y {
+    @apply py-24 lg:py-39;
+}
+
+.responsive-padding-t {
+    @apply pt-24 lg:pt-39;
+}
+
+.responsive-padding-b {
+    @apply pb-24 lg:pb-39;
+}
+
+.responsive-menu-padding-t {
+    @apply pt-18;
+}

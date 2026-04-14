@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@import "./base/default.css";
+@import "./components/texts.css";
+@import "./components/layout.css";
+
+@theme {
+    /*Colors*/
+    --color-*: initial;
+    --color-inherit: inherit;
+    --color-transparent: transparent;
+    --current: currentColor;
+
+    --color-rose-red: oklch(0.58 0.14 14.9);
+    --color-skin-orange: oklch(0.77 0.09 26.6);
+    --color-light-green: oklch(0.84 0.03 154.2);
+    --color-emerald-blue: oklch(0.6 0.07 207.1);
+    --color-dark-navy: oklch(0.28 0.06 257.6);
+    --color-dim-white: oklch(0.98 0 0);
+    --color-pure-white: oklch(1 0 0);
+
+    /*font-family*/
+    --font-craftygirls: 'CraftyGirls', cursive;
+    --font-poppins: 'Poppins', sans-serif;
+}

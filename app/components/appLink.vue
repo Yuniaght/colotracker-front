@@ -3,8 +3,8 @@
             :to="to" 
             :target="isExternal ? '_blank' : undefined"
             :rel="isExternal ? 'noopener noreferrer' : undefined" 
-            active-class="text-red-800"
-            class="hover:text-red-500 transition-colors ease-in-out duration-300">
+            active-class="text-skin-orange"
+            class="hover:text-rose-red transition-colors ease-in-out duration-300">
     <slot />
   </NuxtLink>
 </template>

@@ -3,8 +3,6 @@
     Bienvenue, voulez-vous vous <NuxtLink to="/login">connecter</NuxtLink> <br>
     Ou peut-être vous <NuxtLink to="/register">inscrire</NuxtLink>?
   </div>
-  <pre>{{ user }}</pre>
 </template>
 <script setup lang="ts">
-const user = useDirectusUser()
 </script>

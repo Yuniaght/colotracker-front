@@ -35,7 +35,24 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const fetchUser = async () => {
     if (user.value) return user.value
     try {
-      const me = await directus.request(readMe());
+      const me = await directus.request(readMe({
+        fields: [
+          "user_name",
+          "email",
+          "role",
+          "discord_pseudonym",
+          "instagram_link",
+          "moderated_count",
+          "status",
+          {
+            avatar: [
+              "id",
+              "filename_download",
+              "title"
+            ]
+          }
+        ]
+      }));
       user.value = me;
       return me;
     } catch (e) {

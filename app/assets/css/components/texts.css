@@ -1,0 +1,23 @@
+.text-title {
+  @apply font-craftygirls text-[28px];
+}
+
+.text-h1,
+.text-h2,
+.text-h3 {
+  @apply font-poppins;
+  line-height: 125%;
+}
+
+.text-h1 {
+  @apply text-[28px];
+}
+
+.text-h2 {
+  @apply text-2xl;
+}
+
+.text-h3 {
+  @apply text-xl
+}
+

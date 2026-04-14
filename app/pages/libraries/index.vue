@@ -1,14 +1,3 @@
-<template>
-  <div>
-    <h1 class="text-3xl">Liste des utilisateurs</h1>
-    <ul>
-      <li v-for="user in users" :key="user.slug">
-        <appLink :to='`/libraries/${user.slug}`'>{{ user.user_name }}</appLink>
-      </li>
-    </ul>
-  </div>
-</template>
-
 <script setup lang="ts">
 const { $directus, $readUsers } = useNuxtApp()
 
@@ -26,3 +15,15 @@ const { data: users } = await useAsyncData('users-list', () => {
   )
 })
 </script>
+
+<template>
+  <div>
+    <h1 class="text-3xl">Liste des utilisateurs</h1>
+    <ul>
+      <li v-for="user in users" :key="user.slug">
+        <appLink :to='`/libraries/${user.slug}`'>{{ user.user_name }}</appLink>
+      </li>
+    </ul>
+  </div>
+</template>
+
