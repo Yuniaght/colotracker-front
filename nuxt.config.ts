@@ -39,5 +39,11 @@ export default defineNuxtConfig({
       baseURL: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/assets`,
     }
   },
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag: string) => tag.startsWith('swiper')
+    },
+  },
 }
 )

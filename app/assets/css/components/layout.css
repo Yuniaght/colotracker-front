@@ -3,11 +3,11 @@
 }
 
 .responsive-padding-x {
-    @apply px-6 sm:px-12 xl:px-36;
+    @apply px-6 sm:px-12;
 }
 
 .responsive-padding-y {
-    @apply py-24 lg:py-39;
+    @apply py-24;
 }
 
 .responsive-padding-t {
