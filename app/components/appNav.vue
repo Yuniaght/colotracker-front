@@ -1,26 +1,128 @@
+<script setup lang="ts">
+const user = useDirectusUser()
+const isOpen = ref(false)
+const isProfileOpen = ref(false)
+const profileRef = ref(null)
+const mobileMenuRef = ref(null)
+
+onClickOutside(profileRef, () => {
+  isProfileOpen.value = false
+})
+
+onClickOutside(mobileMenuRef, () => {
+  isOpen.value = false
+}, {
+  ignore: ['.hamburger-button'] // On ignore les clics sur ce sélecteur
+})
+
+
+const toggleMenu = () => {
+  isOpen.value = !isOpen.value
+}
+
+const toggleProfile = () => {
+  isProfileOpen.value = !isProfileOpen.value
+}
+
+const { y } = useWindowScroll();
+
+const showTopMenu = ref(true);
+const scrolled = ref(false);
+
+watch(y, (value, oldValue) => {
+  showTopMenu.value = !(value > 75 && value > oldValue);
+  scrolled.value = y.value > 75;
+});
+
+const publicLink = [
+  { path: "/", name: "Accueil" },
+  { path: "/books", name: "Livres" },
+  { path: "/libraries", name: "Trackers" },
+  { path: "/about", name: 'A propos' }
+]
+</script>
+
 <template>
-  <header class="flex justify-between py-1 px-3 content-center items-center border-b">
-    <div class="text-4xl"><NuxtLink to="/" class="flex items-center gap-1"><NuxtImg src="logo.png" width="50" height="50"></NuxtImg>Colotracker</NuxtLink></div>
-    <nav> 
-      <ul class="flex justify-between gap-2">
-        <li><AppLink to="/">Accueil</AppLink></li>
-        <li><AppLink to="/books">Livres</AppLink></li>
-        <li><AppLink to="/libraries">Trackers</AppLink></li>
-      </ul>
-    </nav>
-    <div>
-      <div v-if="!user">
-        <AppLink to="/login">Connexion</AppLink>
-         - 
-        <AppLink to="/register">S'inscrire</AppLink>
+  <header class="fixed top-0 left-0 w-full h-18 px-8 py-3 z-50"
+    :class="{ 'pointer-events-none': !showTopMenu && !isOpen}">
+    <div v-if="isOpen" class="fixed inset-0 bg-black/40 backdrop-blur-sm lg:hidden top-20" @click="isOpen = false" />
+    <div 
+      class="transition-transform duration-500 absolute inset-0 bg-dim-white px-8 py-3" 
+      :class="{'-translate-y-full' : !showTopMenu && !isOpen}"
+    >
+
+      <div class="relative w-full flex justify-between items-center">
+        <div>
+          <NuxtLink to="/" class="flex items-center gap-1">
+            <NuxtImg src="logo.png" width="50" height="50" />
+            <span class="text-title">Colotracker</span>
+          </NuxtLink>
+        </div>
+
+        <nav class="hidden lg:block">
+          <ul class="flex gap-4 items-center">
+            <li v-for="link in publicLink" :key="link.path">
+              <AppLink :to="link.path">{{ link.name }}</AppLink>
+            </li>
+
+            <li v-if="!user">
+              <AppLink :to="{ path: 'login' }">Connexion</AppLink>
+            </li>
+
+            <li v-else class="relative" ref="profileRef">
+              <button @click="toggleProfile" class="flex items-center focus:outline-none cursor-pointer pt-1">
+                <div
+                  class="w-10 h-10 rounded-full border-2 border-skin-orange overflow-clip hover:border-opacity-70 transition-all">
+                  <nuxt-picture v-if="user.avatar != null" provider="directus"
+                    :src="`${user.avatar.id}/${user.avatar.filename_download}`" :alt="user.avatar.title"
+                    class="w-full h-full object-cover" />
+                  <nuxt-picture v-else src="/img/defaultavatar.jpg" alt="avatar par défaut"
+                    class="w-full h-full object-cover" />
+                </div>
+              </button>
+
+              <div v-if="isProfileOpen"
+                class="absolute right-0 mt-2 w-48 bg-dim-white py-2 flex flex-col items-center z-60">
+                <AppLink to="/profile" class="w-full text-center py-2 hover:bg-gray-50" @click="toggleProfile">
+                  Mon profil
+                </AppLink>
+                <button @click="$logout(); toggleProfile"
+                  class="w-full text-center py-2 cursor-pointer text-rose-red hover:text-dark-navy">
+                  Déconnexion
+                </button>
+              </div>
+            </li>
+          </ul>
+        </nav>
+
+        <button @click="toggleMenu" class="lg:hidden p-2 hamburger-button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </div>
-      <div v-else>
-        <AppLink to="/profile">Mon profil</AppLink> - 
-        <button @click="$logout()">Déconnexion</button>
+
+      <div v-if="isOpen" class="lg:hidden absolute top-full left-0 w-full z-100 bg-dim-white" ref="mobileMenuRef">
+        <div class="flex flex-col items-center py-6 space-y-4">
+          <div v-if="user" class="flex flex-col items-center space-y-4 w-full">
+            <div class="w-16 h-16 rounded-full border-2 border-skin-orange overflow-clip">
+              <nuxt-picture v-if="user.avatar != null" provider="directus"
+                :src="`${user.avatar.id}/${user.avatar.filename_download}`" :alt="user.avatar.title" />
+              <nuxt-picture v-else src="/img/defaultavatar.jpg" alt="avatar par défaut" />
+            </div>
+            <AppLink @click="isOpen = false" to="/profile">Mon profil</AppLink>
+          </div>
+
+          <AppLink v-for="link in publicLink" @click="isOpen = false" :to="link.path">{{ link.name }}</AppLink>
+          <template v-if="!user">
+            <AppLink @click="isOpen = false" to="/login">Connexion</AppLink>
+            <AppLink @click="isOpen = false" to="/register">S'inscrire</AppLink>
+          </template>
+          <template v-if="user">
+            <button @click="$logout(); isOpen = false">Déconnexion</button>
+          </template>
+        </div>
       </div>
     </div>
   </header>
 </template>
-<script setup lang="ts">
-  const user = useDirectusUser()
-</script>

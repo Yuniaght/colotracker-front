@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -15,19 +17,33 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-  "/directus/**": { proxy: `${import.meta.env.NUXT_PUBLIC_DIRECTUS_URL}/**`
-    } 
+  "/directus/**": { proxy: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/**` } 
   },
 
-  modules: ["@nuxtjs/tailwindcss", 
+  modules: [
+            '@vueuse/nuxt',
             "@nuxt/image",
             "@vee-validate/nuxt",
           ],
+
+  vite: {
+    plugins: [tailwindcss()],
+  },
+
+  css: [
+    '~/assets/css/tailwind.css',
+  ],
 
   image: {
     directus: {
       baseURL: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/assets`,
     }
+  },
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag: string) => tag.startsWith('swiper')
+    },
   },
 }
 )

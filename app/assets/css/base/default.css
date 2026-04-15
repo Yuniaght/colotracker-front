@@ -1,0 +1,38 @@
+@layer base {
+    body {
+        --_background-color: var(--color-dim-white);
+        @apply bg-(--_background-color) duration-1000 ease-in-out;
+
+        @apply font-poppins text-dark-navy;
+        
+    }
+
+    /*path {
+        fill: currentColor;
+    }*/
+    p + ul,
+    ul + p,
+    p + p {
+        @apply mt-2
+    }
+
+    address {
+        @apply not-italic;
+    }
+
+    b, strong {
+        @apply font-semibold;
+    }
+
+    [type='text'], [type='email'], [type='url'], [type='password'], [type='number'], [type='date'], [type='datetime-local'], [type='month'], [type='search'], [type='tel'], [type='time'], [type='week'], [multiple], textarea, select {
+        outline: none;
+    }
+
+    textarea {
+        @apply resize-none;
+    }
+
+    ::selection {
+        @apply bg-rose-red text-pure-white
+    }
+}

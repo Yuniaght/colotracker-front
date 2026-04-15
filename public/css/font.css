@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'CraftyGirls';
+    font-weight: 400;
+    src: url('../fonts/CraftyGirls.ttf') format('truetype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 400;
+    src: url('../fonts/poppins-regular.woff2') format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 600;
+    src: url('../fonts/poppins-semibold.woff2') format('woff2');
+    font-display: swap;
+}

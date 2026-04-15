@@ -1,0 +1,74 @@
+.btn {
+    --_background-color: var(--background-color, var(--color-dim-white));
+    --_color: var(--color, var(--color-skin-orange));
+
+    --_hover-background-color: var(--hover-background-color, var(--color-dark-navy));
+    --_hover-color: var(--hover-color, var(--color-dim-white));
+
+    cursor: pointer;
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: .5;
+    }
+
+    @apply text-(--_color) bg-(--_background-color) rounded-4xl inline-flex items-center justify-center gap-4 leading-normal;
+
+    @apply transition duration-500 ease-in-out;
+
+    &:not(.btn--no-hover) {
+        @apply hover:text-(--_hover-color) hover:bg-(--_hover-background-color);
+    }
+}
+
+.btn:not([class*="btn--size"]) {
+    @apply px-4 py-3;
+}
+
+.btn--size-small {
+    @apply p-2;
+}
+
+.btn--size-icon {
+    @apply p-2;
+
+    .icon {
+        @apply size-4.5;
+    }
+}
+
+.btn--size-medium {
+    @apply px-4 py-2 font-normal;
+}
+
+.btn--dark-navy {
+    --background-color: var(--color-dark-navy);
+    --color: var(--color-dim-white);
+
+    --hover-background-color: var(--color-emerald-blue);
+
+    --hover-color: var(--color-dark-navy);
+}
+
+.btn--emerald-blue {
+    --background-color: var(--color-emerald-blue);
+    --color: var(--color-dark-navy);
+
+    --hover-background-color: var(--color-dark-navi);
+    --hover-color: var(--color-dim-white);
+}
+
+.btn--rose-red {
+    --background-color: var(--color-rose-red);
+    --color: var(--color-dark-navy);
+
+    --hover-background-color: var(--color-dim-white);
+    --hover-color: var(--color-dark-navy);
+}
+
+
+
+.swiper-button-disabled {
+    @apply opacity-0 pointer-events-none
+}
+
