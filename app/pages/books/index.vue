@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { createItem } from '@directus/sdk'
+const { $directus, $readItems } = useNuxtApp()
 const user = useDirectusUser()
 const route = useRoute()
 const BooksPerPage = 16
-const { $directus, $readItems } = useNuxtApp()
-
+const isConfirmModalOpen = ref(false);  
+const bookToProcess = ref<string | null>(null);
 
 const { values, defineField } = useForm<{
   search: string,
@@ -96,6 +97,37 @@ const { data: categories, error: categoriesFetchError } = await useLazyAsyncData
 )
 
 async function handleAddBook(bookId: string) {
+  const existing = await $directus.request(
+    $readItems('library', {
+      filter: {
+        _and: [
+          { user: { _eq: user.value.id } },
+          { book: { _eq: bookId } }
+        ]
+      },
+      params: {
+          _t: Date.now(),
+        }
+    })
+  );      
+  console.log(existing)
+  if (existing.length > 0) {
+    bookToProcess.value = bookId;
+    isConfirmModalOpen.value = true;
+  } else {
+    executeCreation(bookId);
+  }
+}
+
+function handleModalConfirm() {
+  if (bookToProcess.value) {
+    executeCreation(bookToProcess.value);
+    isConfirmModalOpen.value = false;
+    bookToProcess.value = null;
+  }
+}
+
+async function executeCreation(bookId: string) {
   const { $toast } = useNuxtApp()
   try {
     await $directus.request(
@@ -104,10 +136,9 @@ async function handleAddBook(bookId: string) {
         book: bookId
       })
     )
-
-    $toast.success("Livre ajouté à vos trackers")
+    $toast.success('Livre ajouté à votre bibliothèque !')
   } catch (e) {
-    $toast.error("Une erreur est survenue")
+    $toast.error("Erreur lors de l'ajout :" + JSON.stringify(e))
   }
 }
 </script>
@@ -155,4 +186,11 @@ async function handleAddBook(bookId: string) {
     <p><nuxt-link :to="{name: 'askbook'}" class="underline underline-offset-2 hover:text-rose-red transition-colors duration-200">Faites une demande d'ajout</nuxt-link> et nous étudierons la possibilité d'ajouter le livre dès que
       possible</p>
   </section>
+  <ModalConfirm 
+    :is-open="isConfirmModalOpen"
+    title="Livre déjà possédé"
+    message="Vous avez déjà ce livre dans votre collection. Voulez-vous vraiment ajouter un exemplaire supplémentaire ?"
+    @close="isConfirmModalOpen = false"
+    @confirm="handleModalConfirm"
+  />    
 </template>
