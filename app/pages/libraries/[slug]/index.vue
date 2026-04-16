@@ -39,16 +39,15 @@ type EnrichedLibraryItem = Library & {
 const { $directus, $readUsers, $readItems } = useNuxtApp()
 const route = useRoute()
 
-const userSlug = route.params.slug as string
+const userSlug = computed(() =>route.params.slug as string)
 
-const { data: users } = await useAsyncData(`user_${userSlug}`, () => {
+const { data: users } = await useAsyncData(`user_${userSlug.value}`, () => {
   return $directus.request(
     $readUsers({
       fields: ['user_name', "slug", 'avatar', 'id', "joined_at", "instagram_link", "discord_pseudonym"],
-      sort: ['-user_name'],
       filter: {
         _and: [
-          { slug: { _eq: userSlug } }
+          { slug: { _eq: userSlug.value } }
         ]
       },
       limit: 1
@@ -62,7 +61,7 @@ if (!users.value || users.value.length === 0) {
 
 const user = users.value[0]
 
-const { data: libraryRaw } = await useAsyncData(`library_${userSlug}`, () => {
+const { data: libraryRaw } = await useAsyncData(`library_${userSlug.value}`, () => {
   return $directus.request(
     $readItems('library', {
       filter: {

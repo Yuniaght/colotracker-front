@@ -4,6 +4,7 @@
 @import "./components/texts.css";
 @import "./components/layout.css";
 @import "./components/button.css"; 
+@import "./components/toast.css";
 
 @theme {
     /*Colors*/

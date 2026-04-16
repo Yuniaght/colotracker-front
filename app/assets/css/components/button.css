@@ -52,7 +52,7 @@
 
 .btn--emerald-blue {
     --background-color: var(--color-emerald-blue);
-    --color: var(--color-dark-navy);
+    --color: var(--color-dim-white);
 
     --hover-background-color: var(--color-dark-navi);
     --hover-color: var(--color-dim-white);
