@@ -1,0 +1,9 @@
+.Toastify__toast-theme--colored {
+    --toastify-color-success: var(--color-emerald-blue);
+    --toastify-color-error: var(--color-rose-red);
+    --toastify-text-color-error: var(--color-dark-navy);
+    --toastify-text-color-success: var(--color-dark-navy);
+
+    --toastify-color-progress-success: var(--color-light-green);
+    --toastify-color-progress-error: var(--color-skin-orange);
+}

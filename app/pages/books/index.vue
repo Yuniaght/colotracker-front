@@ -96,6 +96,7 @@ const { data: categories, error: categoriesFetchError } = await useLazyAsyncData
 )
 
 async function handleAddBook(bookId: string) {
+  const { $toast } = useNuxtApp()
   try {
     await $directus.request(
       createItem('library', {
@@ -103,10 +104,10 @@ async function handleAddBook(bookId: string) {
         book: bookId
       })
     )
-    // Optionnel : Afficher un toast de succès
-    alert('Livre ajouté à votre bibliothèque !')
+
+    $toast.success("Livre ajouté à vos trackers")
   } catch (e) {
-    console.error("Erreur d'ajout :", e)
+    $toast.error("Une erreur est survenue")
   }
 }
 </script>
