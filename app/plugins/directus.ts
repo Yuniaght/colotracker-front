@@ -37,6 +37,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     try {
       const me = await directus.request(readMe({
         fields: [
+          "id",
           "user_name",
           "email",
           "role",

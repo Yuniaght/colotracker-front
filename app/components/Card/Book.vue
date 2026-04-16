@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { item, userConnected } = defineProps<{
   item: {
+    id: number,
     front_cover: {
       id: string;
       filename_download: string;
@@ -14,10 +15,12 @@ const { item, userConnected } = defineProps<{
   };
   userConnected: boolean;
 }>();
+
+defineEmits(['addToLibrary'])
 </script>
 
 <template>
-  <div class="relative group w-full max-w-[325px] rounded-lg overflow-hidden bg-pure-white shadow-sm">
+  <div class="relative group w-full max-w-[325px] md:max-w-full rounded-lg overflow-hidden bg-pure-white shadow-sm">
     <nuxt-link 
       :to="`/books/${item.slug}`" 
       class="block"
@@ -42,7 +45,7 @@ const { item, userConnected } = defineProps<{
     </nuxt-link>
 
     <div v-if="userConnected" class="px-4 pb-4">
-      <AppButton theme="emerald-blue" class="w-full">
+      <AppButton theme="emerald-blue" class="w-full" @click="$emit('addToLibrary', item.id)">
         Ajouter à ma bibliothèque
       </AppButton>
     </div>
