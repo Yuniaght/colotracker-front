@@ -3,7 +3,7 @@ import type { SwiperOptions } from 'swiper/types'
 import { aggregate } from '@directus/sdk'
 const { $directus, $readItems } = useNuxtApp()
 
-const {data, error} = await useAsyncData('latest-drawings', () => {
+const {data, error} = await useLazyAsyncData('latest-drawings', () => {
   return $directus.request(
     $readItems('completed_pages', {
       fields: [
