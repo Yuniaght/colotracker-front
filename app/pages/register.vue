@@ -52,7 +52,7 @@ const submitForm = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div class="px-12 py-6">
+  <section class="px-12 py-6">
     <h1 class="text-2xl">Rejoignez Colotracker</h1>
     <div v-if="registrationStatus.type === 'success'" class="p-4 mb-4 text-green-700 bg-green-100 rounded">
       <p>{{ registrationStatus.message }}</p>
@@ -64,5 +64,5 @@ const submitForm = handleSubmit(async (values) => {
     <form @submit.prevent="submitForm">
       <FormRegistration />
     </form>
-  </div>
+  </section>
 </template>

@@ -1,0 +1,11 @@
+.error-message {
+  @apply text-left text-rose-red text-sm block mt-2;
+}
+
+.default-input {
+  @apply w-full border-2 border-dark-navy/15 p-4 rounded-xl bg-pure-white
+}
+
+.input-error {
+  @apply border-rose-red
+}

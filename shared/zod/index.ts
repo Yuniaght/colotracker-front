@@ -13,6 +13,18 @@ const registerPartial = zod.object({
     }, {message: "Ce champ est obligatoire"}),
 })
 
+const askABookPartial = zod.object({
+  book_name: zod.string().min(1).max(100),
+  book_author: zod.string().min(1).max(100),
+  page_count: zod.coerce.bigint().positive(),
+  release_date: zod.date(),
+  store_link: zod.url(),
+  privacy: zod.coerce.boolean().refine(value => {
+    return value;
+  }, {message: "Ce champ est obligatoire"}),
+})
+
 export const zodShared = {
-  registerPartial
+  registerPartial,
+  askABookPartial,
 }
