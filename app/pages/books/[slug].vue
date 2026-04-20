@@ -1,62 +1,11 @@
-<template>
-  <div class="p-10 max-w-5xl mx-auto">
-
-    <div class="mb-6">
-      <AppLink to="/books" class="text-blue-600 hover:underline">
-        ⬅️ Retour au catalogue
-      </AppLink>
-    </div>
-    <div v-if="pending">Chargement du livre...</div>
-    <div v-else-if="error || !book">
-      <h1 class="text-red-500 text-2xl">Livre introuvable</h1>
-      <p>Il semble que ce livre n'existe pas ou a été déplacé.</p>
-    </div>
-    <div v-else class="flex gap-10 items-start">
-      <div class="w-1/3 shrink-0">
-        <div class="border rounded-lg overflow-hidden shadow-lg">
-          <NuxtImg provider="directus" :src="book.front_cover" :alt="book.name" width="400" height="600" fit="cover"
-            class="w-full h-auto object-cover" />
-        </div>
-      </div>
-      <div class="flex-1 space-y-4">
-        <h1 class="text-4xl font-bold text-gray-800">{{ book.name }}</h1>
-        <p class="text-xl text-gray-600">
-          Par <span class="font-semibold text-gray-900">{{ book.author?.full_name }}</span>
-        </p>
-        <div class="flex gap-2">
-          <span v-for="(cat, index) in book.category_list" :key="index"
-            class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-            {{ cat.category_list_id?.name }}
-          </span>
-        </div>
-        <hr class="border-gray-200 my-4" />
-        <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
-          <div>
-            <span class="font-bold">Date de sortie :</span>
-            {{ new Date(book.release_date).toLocaleDateString('fr-FR') }}
-          </div>
-          <div>
-            <span class="font-bold">Nombre de coloriage :</span> {{ book.page_count }}
-          </div>
-        </div>
-        <div class="pt-6">
-          <a v-if="book.store_link" :href="book.store_link" target="_blank"
-            class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold transition inline-block">
-            Acheter sur le store 🛒
-          </a>
-          <span v-else class="text-gray-500 italic">Non disponible à l'achat</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
+const { handleAddBook, isConfirmModalOpen, handleModalConfirm } = useLibrary()
+const user = useDirectusUser()
 const { $directus, $readItems } = useNuxtApp()
 const route = useRoute()
 const slug = route.params.slug as string
 
-const { data: book, error } = await useAsyncData('book-list', () => {
+const { data: book, pending, error } = await useAsyncData('book-list', () => {
   return $directus.request(
     $readItems('books', {
       filter: {
@@ -65,10 +14,34 @@ const { data: book, error } = await useAsyncData('book-list', () => {
         }
       },
       fields: [
-        "*",
-        "author.full_name",
-        "category_list.category_list_id.name"
-      ] as any,
+        "id",
+        "name",
+        "page_count",
+        "release_date",
+        "store_link",
+        {
+          author: [
+            "full_name"
+          ]
+        },
+        {
+          category_list : [
+            {
+              category_list_id: [
+                "id",
+                "name"
+              ]
+            }
+          ]
+        },
+        {
+          front_cover: [
+            "id",
+            "title",
+            "filename_download"
+          ]
+        },
+      ],
       limit: 1
     },
     )
@@ -76,6 +49,74 @@ const { data: book, error } = await useAsyncData('book-list', () => {
 }, {
   transform: (data: any[]) => data && data.length > 0 ? data[0] : null
 }
-
 )
+
+const categories = computed(() => {
+  if (!book.value?.category_list) return []
+  
+  return book.value.category_list.map((item: any) => ({
+    id: item.category_list_id.id,
+    name: item.category_list_id.name
+  }))
+})
+
+const userConnected = computed(() => !!user.value)
 </script>
+
+<template>
+  <section class="responsive-padding-y responsive-padding-x">
+    <div class="mb-6">  
+      <AppLink to="/books" class="text-emerald-blue">
+       ⬅ Retour aux livres
+      </AppLink>
+    </div>
+
+    <div v-if="pending">Chargement du livre...</div>
+
+    <div v-else-if="error || !book">
+      <h1 class="text-red-500 text-2xl">Livre introuvable</h1>
+      <p>Il semble que ce livre n'existe pas ou a été déplacé.</p>
+    </div>
+
+    <div v-else class="bg-pure-white shadow-sm rounded-3xl px-4 lg:px-10 py-10 lg:grid-cols-[max-content_1fr] lg:grid gap-10">
+      <div class="max-w-105 h-fit mx-auto lg:mx-0 pb-10 lg:pb-0">
+        <nuxt-picture 
+          provider="directus"
+          :src="`${book.front_cover.id}/${book.front_cover.filename_download}`"
+          :alt="book.front_cover.title"
+          :img-attrs="{ class: 'object-cover w-full h-full rounded-xl mb-6' }"
+        />
+        <div v-if="userConnected" class="w-full">
+          <AppButton theme="emerald-blue" class="w-full" @click="handleAddBook(book.id)">
+            Ajouter à ma bibliothèque
+          </AppButton>
+        </div>
+      </div>
+
+      <div>
+        <h1 class="text-h1 pb-2">{{ book.name }}</h1>
+        <AppLink class="text-h2 text-emerald-blue pb-8" :to="{name: 'books' ,query: {search: book.author.full_name}}"> {{ book.author.full_name }}</AppLink>
+        <div class="p-6">
+          <p class="pb-2 border-b-2 border-dark-navy/15">Informations</p>
+          <p class="flex justify-between"><span>Nombre de pages :</span><span>{{ book.page_count }}</span></p>
+          <p class="flex justify-between"><span>Date de sortie :</span><span>{{ formatDate(book.release_date) }}</span></p>
+          <p class="flex justify-between"><span>Lien d'achat :</span><AppLink :to="book.store_link" class="text-emerald-blue">Acheter ce livre</AppLink></p>
+        </div>
+        <div>
+          <p class="pb-2">Catégories</p>
+          <div class="flex flex-wrap gap-2">
+            <nuxt-link v-for="cat in categories" :to="{name: 'books' , query: {categories: cat.id}}" class="inline-block p-2 rounded-full transition-colors duration-200 text-sm font-medium bg-light-green text-dark-navy/70 hover:bg-skin-orange">{{ cat.name }}</nuxt-link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+    <ModalConfirm 
+    :is-open="isConfirmModalOpen"
+    title="Livre déjà possédé"
+    message="Vous avez déjà ce livre dans votre collection. Voulez-vous vraiment ajouter un exemplaire supplémentaire ?"
+    @close="isConfirmModalOpen = false"
+    @confirm="handleModalConfirm"
+  />    
+</template>
+
