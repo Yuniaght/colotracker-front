@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { createItem } from '@directus/sdk'
+const { handleAddBook, isConfirmModalOpen, handleModalConfirm } = useLibrary()
 const { $directus, $readItems } = useNuxtApp()
 const user = useDirectusUser()
 const route = useRoute()
 const BooksPerPage = 16
-const isConfirmModalOpen = ref(false);  
-const bookToProcess = ref<string | null>(null);
 
 const { values, defineField } = useForm<{
   search: string,
@@ -84,63 +82,6 @@ watch([searchedQuery, selectedCategories], ([newSearch, newCats]) => {
   }, { replace: true })
 })
 
-const { data: categories, error: categoriesFetchError } = await useLazyAsyncData('categories-list', () =>
-  $directus.request(
-    $readItems('category_list', {
-      fields: [
-        "id",
-        "name"
-      ],
-      sort: 'name'
-    })
-  )
-)
-
-async function handleAddBook(bookId: string) {
-  const existing = await $directus.request(
-    $readItems('library', {
-      filter: {
-        _and: [
-          { user: { _eq: user.value.id } },
-          { book: { _eq: bookId } }
-        ]
-      },
-      params: {
-          _t: Date.now(),
-        }
-    })
-  );      
-  console.log(existing)
-  if (existing.length > 0) {
-    bookToProcess.value = bookId;
-    isConfirmModalOpen.value = true;
-  } else {
-    executeCreation(bookId);
-  }
-}
-
-function handleModalConfirm() {
-  if (bookToProcess.value) {
-    executeCreation(bookToProcess.value);
-    isConfirmModalOpen.value = false;
-    bookToProcess.value = null;
-  }
-}
-
-async function executeCreation(bookId: string) {
-  const { $toast } = useNuxtApp()
-  try {
-    await $directus.request(
-      createItem('library', {
-        user: user.value.id,
-        book: bookId
-      })
-    )
-    $toast.success('Livre ajouté à votre bibliothèque !')
-  } catch (e) {
-    $toast.error("Erreur lors de l'ajout :" + JSON.stringify(e))
-  }
-}
 </script>
 
 <template>
@@ -148,7 +89,7 @@ async function executeCreation(bookId: string) {
     <h1 class="text-h1 text-center pb-6 ">Bibliothèque des livres</h1>
     <div>
       <form @submit.prevent class="mb-10 space-y-6">
-        <div class="search-group">
+        <div class="responsive-layout">
           <input v-model="searchedQuery" id="search" type="text" placeholder="Rechercher un livre, un illustrateur..."
             class="text-sm shadow-sm w-full px-6 py-4 border border-dark-navy/50 rounded-4xl" />
         </div>

@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "generate:schema": "npx -p dotenv-cli dotenv -- sh -c \"directus-sdk-typegen -u ${NUXT_PUBLIC_DIRECTUS_URL} -t ${DIRECTUS_TOKEN} -o ./types/directus.d.ts\""
+    "generate:schema": "npx -p dotenv-cli dotenv -- sh -c \"directus-sdk-typegen -u ${NUXT_PUBLIC_DIRECTUS_URL} -t ${DIRECTUS_TOKEN} -o ./shared/types/directus.d.ts\""
   },
   "dependencies": {
     "@directus/sdk": "^20.3.0",
