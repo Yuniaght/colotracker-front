@@ -3,6 +3,9 @@ import {serialize} from 'object-to-formdata'
 import {toTypedSchema} from "@vee-validate/zod";
 import {askABookSchema, type askABookFormValues} from '~/components/Form/askBookSchema'
 
+const { $toast } = useNuxtApp()
+
+
 const validationSchema =  toTypedSchema(askABookSchema)
 
 const askABookStatus = ref<{ type: 'idle' | 'success' | 'error', message?: string }>({ 
@@ -14,14 +17,13 @@ const { values: formValues, handleSubmit, setFieldValue, resetForm, setErrors } 
 })
 
 const submitForm = handleSubmit(async (values) => {
-
   askABookStatus.value = { type: 'idle' }
 
   try {
-    const payloadBody = (values.avatar && values.avatar.length > 0)
+    const payloadBody = (values.book_front_cover && values.book_front_cover.length > 0)
         ? serialize({ ...values})
         : { ...values }
-    
+
     const response = await $fetch('/api/askbook', {
       method: 'POST',
       body: payloadBody
@@ -31,6 +33,8 @@ const submitForm = handleSubmit(async (values) => {
       type: 'success', 
       message: response.message || 'Inscription réussie !' 
     }
+
+    $toast.success(askABookStatus.value.message)
 
     resetForm()
 
@@ -45,6 +49,7 @@ const submitForm = handleSubmit(async (values) => {
     if (e.data?.data) {
        setErrors(e.data.data) 
     }
+    $toast.error(askABookStatus.value.message)
   }
 
 }) 
@@ -54,7 +59,7 @@ const submitForm = handleSubmit(async (values) => {
     <h1 class="text-h1 text-center pb-2 ">Suggérez un nouveau livre</h1>
     <p class="text-center max-w-175 pb-10 mx-auto">Vous ne trouvez pas votre livre de coloriage dans notre base de données ? Remplissez ce formulaire pour que notre équipe l'ajoute au catalogue !</p>
     
-    <form @submit.prevent="console.log('fonction')">
+    <form @submit.prevent="submitForm" class="responsive-layout">
       <FormAskABook />
     </form>
   </section>

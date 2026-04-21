@@ -3,7 +3,7 @@ import {maxSize, allowedTypes, zodShared, maxFiles} from '#shared/zod'
 
 export const askABookFields = {
   ...zodShared.askABookPartial.shape,
-  avatar: zod.array(zod.file().max(maxSize).mime(allowedTypes)).max(maxFiles).default([]).optional()
+  book_front_cover: zod.array(zod.file().max(maxSize).mime(allowedTypes)).max(maxFiles)
 }
 
 export const askABookSchema = zod.object(askABookFields)

@@ -12,8 +12,8 @@
   </InputText>
   
   <InputText
-      label="book_author"
-      name="book_author"
+      label="author"
+      name="author"
       input-id="book_author"
       placeholder="Illustrateur/Maison d'édition">
     <label class="font-semibold block mb-2" for="book_author">Auteur/Maison d'édition</label>
@@ -32,9 +32,16 @@
       label="release_date"
       name="release_date"
       input-id="release_date"
-      placeholder="Date de sortie"
       type="date">
     <label class="font-semibold block mb-2" for="release_date">Date de sortie</label>
+  </InputText>
+
+  <InputText
+      label="store_link"
+      name="store_link"
+      input-id="store_link"
+      placeholder="Amazon, Etsy, autre...">
+    <label class="font-semibold block mb-2" for="store_link">Date de sortie</label>
   </InputText>
 
     <InputMultipleFile
