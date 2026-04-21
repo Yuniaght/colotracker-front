@@ -72,6 +72,19 @@ const { data: books, pending, error: bookFetchError } = await useLazyAsyncData(
   }
 )
 
+const { data: categories, error: categoriesFetchError } = await useLazyAsyncData(
+  'categories-list',
+  () => $directus.request(
+    $readItems('category_list', {
+      fields: [
+        "id",
+        "name",
+      ],
+      sort: ['name']
+    })
+  )
+)
+
 watch([searchedQuery, selectedCategories], ([newSearch, newCats]) => {
   navigateTo({
     query: {
