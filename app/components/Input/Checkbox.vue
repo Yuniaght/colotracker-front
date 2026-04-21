@@ -28,7 +28,7 @@ const {handleChange, value, checked, errorMessage} = useField(name, props.rules,
 </script>
 
 <template>
-  <div>
+  <div class="pb-6">
     <label class="inline-flex gap-4" :class="labelClass">
       <input
           class="flex-grow-0 flex-shrink-0 checkbox"

@@ -3,6 +3,8 @@
 @import "./base/default.css";
 @import "./components/texts.css";
 @import "./components/layout.css";
+@import "./components/input.css";
+@import "./components/icon.css";
 @import "./components/button.css"; 
 @import "./components/toast.css";
 

@@ -7,9 +7,9 @@ export interface AskedBook {
 	book_front_cover: DirectusFile | string;
 	author?: string | null;
 	page_count?: number | null;
-	releade_date?: string | null;
 	store_link?: string | null;
 	requested_number?: number | null;
+	release_date?: string | null;
 }
 
 export interface Author {

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type {RuleExpression} from "vee-validate";
+import { useDropZone } from '@vueuse/core'
+
+const dropZoneRef = ref<HTMLDivElement>()
 
 type AcceptProp = string[] | string
 
@@ -13,7 +16,7 @@ const {
   disabled = false,
   label,
   hideErrors = false,
-  placeholder = ''
+
 } = defineProps<{
   name: string
   label?: string
@@ -21,7 +24,6 @@ const {
   hideErrors?: boolean;
   disabled?: boolean;
   inputId?: string
-  icon?: string
   accept?: AcceptProp
   maxFiles?: number
   maxSizeMb?: number
@@ -64,17 +66,9 @@ function dedupeFiles(newFiles: File[]): File[] {
 }
 
 function onChange() {
-  const input = inputRef.value!
+const input = inputRef.value!
   const validFiles = Array.from(input.files ?? [])
-  const mergedFiles = dedupeFiles(validFiles)
-
-  const remaining = maxFiles - (filesListValue.value?.length ?? 0)
-
-  const toAdd = mergedFiles.slice(0, Math.max(0, remaining))
-  const overflow = mergedFiles.slice(Math.max(0, remaining))
-
-  setValue([...(filesListValue.value ?? []), ...toAdd, ...overflow])
-
+  handleFiles(validFiles)
   input.value = ''
 }
 
@@ -92,81 +86,123 @@ function clearAll() {
 function openFileSelector() {
   inputRef.value?.click()
 }
+
+const { isOverDropZone } = useDropZone(dropZoneRef, {
+  onDrop: (files: File[] | null) => {
+    if (!files || disabled) return
+    handleFiles(files)
+  },
+})
+
+function handleFiles(newFiles: File[]) {
+  const mergedFiles = dedupeFiles(newFiles)
+  const remaining = maxFiles - (filesListValue.value?.length ?? 0)
+  
+  const toAdd = mergedFiles.slice(0, Math.max(0, remaining))
+  const overflow = mergedFiles.slice(Math.max(0, remaining))
+
+  setValue([...(filesListValue.value ?? []), ...toAdd, ...overflow])
+}
+
 </script>
 
 <template>
-  <div>
-    <div>
-      <slot :id="inputId" :error="errorMessage"></slot>
+  <div class="pb-6">
+    <slot :id="inputId" :error="errorMessage"></slot>
 
-      <div class="relative">
-        <input
-            ref="inputRef"
-            type="file"
-            class="hidden"
-            multiple
-            :id="inputId"
-            :accept="acceptAttr"
-            :disabled="disabled"
-            @change="onChange"
-        />
+    <div 
+      ref="dropZoneRef"
+      @click="openFileSelector"
+      :class="[
+        'relative w-full h-48 border-2 border-dashed rounded-[20px] transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center',
+        !isOverDropZone ? 'border-emerald-blue bg-dim-white' : 'border-dark-navy bg-light-green shadow-inner scale-[1.01]',
+        errorMessage ? 'border-rose-red bg-rose-red/5' : ''
+      ]"
+    >
+      <input
+        ref="inputRef"
+        type="file"
+        class="hidden"
+        multiple
+        :id="inputId"
+        :accept="acceptAttr"    
+        :disabled="disabled"
+        @change="onChange"
+      />
 
-        <span>
-          <i class="absolute top-1/2 right-6 -translate-y-1/2 -translate-x-1/2 icon icon-upload text-gold-400" />
-        </span>
-
-        <input
-            class="w-full default-input"
-            readonly
-            :disabled="disabled"
-            :class="[inputClass, errorMessage ? 'input-error': undefined]"
-            :placeholder="placeholder"
-            @click="openFileSelector"
-            type="text">
-        <i v-if="icon" class="icon absolute top-1/2 right-3 -translate-y-1/2 pointer-events-none" :class="icon" />
+      <div class="mb-4 text-emerald-blue text-4xl">
+        <i class="icon icon-upload" />
       </div>
 
-      <transition name="fade">
-          <span class="error-message" v-if="errorMessage && !hideErrors">
-              {{ errorMessage }}
-          </span>
-      </transition>
+      <p class="text-dark-navy font-bold text-lg leading-tight">
+        Cliquez pour ajouter une image 
+        <span class="font-normal opacity-70">ou glissez-déposez</span>
+      </p>
 
-      <div class="flex items-center gap-2 mt-2 flex-wrap justify-between text-xs">
-        <div class="text-sm" v-if="$slots.footer">
-          <slot name="footer"></slot>
-        </div>
+      <div class="mt-2 text-emerald-blue/80 text-sm font-medium">
+        <slot name="footer" v-if="$slots.footer"></slot>
+        <p v-else>
+          {{ Array.isArray(accept) ? accept.join(', ').replace(/image\//g, '').toUpperCase() : accept.replace(/image\//g, '').toUpperCase() }} 
+          (Max. {{ maxSizeMb }}MB)
+        </p>
+      </div>
 
-        <button
-            v-if="(filesListValue?.length ?? 0) > 0"
-            type="button"
-            class="underline cursor-pointer hover:no-underline text-gold-400"
-            @click="clearAll">
-          Tout effacer
-        </button>
+      <div v-if="filesListValue?.length" class="absolute top-4 right-4">
+         <span class="bg-skin-orange text-dark-navy text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-wider">
+           {{ filesListValue.length }} sélectionné(s)
+         </span>
       </div>
     </div>
 
-    <ul v-if="(filesListValue?.length ?? 0) > 0" class="text-sm my-2">
+    <transition name="fade">
+      <span class="text-rose-red text-xs mt-2 font-semibold block" v-if="errorMessage && !hideErrors">
+        {{ errorMessage }}
+      </span>
+    </transition>
+
+    <ul v-if="filesListValue?.length" class="text-sm my-3 space-y-2">
       <li
-          v-for="(f, i) in checkFiles"
-          :key="f.file.name + f.file.lastModified + i"
-          class=" py-2 px-4 flex items-center justify-between rounded-sm mt-1"
-          :class="[!f.accepted ? 'bg-red-300' : 'bg-gold-400/60']">
-        <div class="text-ellipsis">
-          {{ f.file.name }} — {{ (f.file.size / 1024 / 1024).toFixed(2) }} MB
+        v-for="(f, i) in checkFiles"
+        :key="f.file.name + f.file.lastModified + i"
+        class="py-3 px-4 flex items-center justify-between rounded-xl border transition-all shadow-sm"
+        :class="[
+          !f.accepted 
+            ? 'border-rose-red bg-rose-red/5' 
+            : 'border-emerald-blue/20 bg-pure-white hover:border-emerald-blue/40'
+        ]"
+      >
+        <div class="flex flex-col truncate pr-4">
+          <span class="font-bold text-dark-navy truncate">{{ f.file.name }}</span>
+          <span class="text-[10px] text-emerald-blue font-medium">{{ (f.file.size / 1024 / 1024).toFixed(2) }} MB</span>
         </div>
 
         <button
-            type="button"
-            title="Retirer le fichier"
-            class="text-white text-xs icon icon-cross cursor-pointer shrink-0"
-            @click="removeAt(i)"
-        ></button>
+          type="button"
+          class="text-dark-navy/40 hover:text-rose-red transition-colors p-2 hover:bg-rose-red/10 rounded-full"
+          @click.stop="removeAt(i)"
+        >
+          <span class="icon icon-cross text-xs">✕</span>
+        </button>
+      </li>
+      
+      <li class="pt-1 flex justify-end">
+        <button 
+          type="button" 
+          class="text-[10px] font-black uppercase tracking-widest text-rose-red/60 hover:text-rose-red transition-colors cursor-pointer" 
+          @click.stop="clearAll"
+        >
+          Tout effacer
+        </button>
       </li>
     </ul>
   </div>
 </template>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>

@@ -27,7 +27,7 @@ const {errorMessage, value: inputValue, handleBlur, handleChange} = useField(
 </script>
 
 <template>
-  <div>
+  <div class="pb-6">
     <slot :id="inputId" :error="errorMessage"></slot>
 
     <div class="relative">
