@@ -1,4 +1,4 @@
-export const calculateProgress = (completedCount: number = 0, totalPages: number | null | undefined): string => {
+ export const calculateProgress = (completedCount: number = 0, totalPages: number | null | undefined): string => {
   if (!totalPages || totalPages <= 0) {
     return "0%"
   }
