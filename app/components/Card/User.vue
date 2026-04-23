@@ -17,7 +17,7 @@ const { item, showButton } = defineProps<{
       title: string
     } | null
   }, 
-  showButton: boolean
+  showButton?: boolean
 }>()
 
 const {data: userStats} = useTrackersStats(item.id, item.slug)
@@ -57,7 +57,7 @@ function copyToClipboard(stringToCopy: string){
     <div :class="showButton ? 'pb-6' : ''">
       <p class="flex justify-between pb-1"><span>Progression</span><span>{{ calculateProgress(userStats?.completedPagesCount, userStats?.totalPages) }}</span></p>
       <div class="w-full bg-dark-navy/20 rounded-full h-2">
-        <div class="h-2 bg-linear-90 from-rose-red to-skin-orange rounded-full" :style="'width:' + calculateProgress(userStats?.completedPagesCount, userStats?.totalPages)"></div>
+        <div class="h-2 bg-linear-90 from-rose-red to-skin-orange rounded-full" :style="'width:' + calculateProgress(userStats?.completedPagesCount, userStats?.totalPages)" />
       </div>
     </div>
     <AppButton v-if="showButton" theme="emerald-blue" class="w-full" :to="{name:'libraries-slug' , params: {slug: item.slug}}">Voir ses trackers</AppButton>

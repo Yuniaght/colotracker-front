@@ -19,7 +19,7 @@ useHead({
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col overflow-hidden">
+  <div class="min-h-screen flex flex-col">
     <NuxtRouteAnnouncer />
     <appNav />
     <main class="flexgrow responsive-menu-padding-t">

@@ -1,18 +1,28 @@
 <script setup lang="ts">
-import type { Library, Book } from '~~/shared/types/directus';
-type EnrichedLibraryItem = Library & {
-  book: Book;
-  completed_pages: { id: number }[];
-};
 const { $directus, $readUsers, $readItems } = useNuxtApp()
 const route = useRoute()
+const bookPerPage = 20
+const userSlug = computed(() => route.params.slug as string)
 
-const userSlug = computed(() =>route.params.slug as string)
-
-const { data: users } = await useAsyncData(`user_${userSlug.value}`, () => {
+const { data: users, pending, error } = await useAsyncData(`user_${userSlug.value}`, () => {
   return $directus.request(
     $readUsers({
-      fields: ['user_name', "slug", 'avatar', 'id', "joined_at", "instagram_link", "discord_pseudonym"],
+      fields: [
+        "id",
+        "user_name",
+        "joined_at",
+        "slug",
+        "discord_pseudonym",
+        "instagram_link",
+        {
+          avatar: [
+            "id",
+            "filename_download",
+            "title"
+          ]
+        }
+
+      ],
       filter: {
         _and: [
           { slug: { _eq: userSlug.value } }
@@ -29,69 +39,78 @@ if (!users.value || users.value.length === 0) {
 
 const user = users.value[0]
 
-const { data: libraryRaw } = await useAsyncData(`library_${userSlug.value}`, () => {
+const { data: library } = await useAsyncData(`library_${userSlug.value}`, () => {
   return $directus.request(
     $readItems('library', {
+      fields: [
+        "id",
+        {
+          book: [
+            "id",
+            "name",
+            "page_count",
+            "slug",
+            {
+              front_cover: [
+                "id",
+                "filename_download",
+                "title"
+              ]
+            }
+          ]
+        },
+        {
+          completed_pages: [
+            "id"
+          ]
+        }
+      ],
+      limit: bookPerPage,
+      sort: ["book.name"],
       filter: {
-        user: { _eq: user?.id }
-      },
-      fields: ["id", "book.id", "book.name", "book.front_cover", "book.page_count", "book.slug", "completed_pages.id"] as any
+        _and: [
+          {
+            user: {
+              _eq: user?.id
+            }
+          }
+        ]
+      }
     })
   )
-})
+}, 
+{
+  transform: (data) => {
+    return data.map((item: any) => ({
+      ...item,
+      completed_pages: item.completed_pages?.length || 0 
+    }))
+  },
+  watch: [user] 
+},
+)
 
-const library = computed(() => {
-  return (libraryRaw.value || []) as unknown as EnrichedLibraryItem[]
-})
 
-const globalstats = computed(() => {
-  if (!library.value || library.value.length <= 0) return
-
-  let totalDone = 0 as number
-  let totalPages = 0 as number
-
-  library.value.forEach(item => {
-    totalDone += item.completed_pages?.length || 0
-    totalPages += item.book?.page_count || 0
-  })
-
-  return {
-    done: totalDone,
-    total: totalPages,
-    percent: totalPages > 0 ? ((totalDone / totalPages) * 100).toFixed(2) + "%" : 0
-  }
-})
 </script>
 
 <template>
-  <div>
-    <div>
-      <h1 class="text-3xl">Trackers de : {{ user?.user_name }}</h1>
-      <p v-if="user?.joined_at">Membre depuis :
-        <NuxtTime :datetime="user?.joined_at" />
-      </p>
-      <AppLink v-if="user?.instagram_link" :to="user?.instagram_link">Instagram</AppLink>
-      <p v-if="user?.discord_pseudonym">Discord : {{ user?.discord_pseudonym }}</p>
+  <section class="responsive-padding-x responsive-padding-y">
+    <div class="mb-6">
+      <AppLink to="/libraries" class="text-emerald-blue">
+        ⬅ Retour aux trackers
+      </AppLink>
     </div>
-    <div v-if="library && library?.length > 0">
-      <h2 class="text-2xl">Statistiques</h2>
-      <p>Pages complétée : {{ globalstats?.done }} / {{ globalstats?.total }} - {{ globalstats?.percent }}</p>
+    <div class="grid items-start md:grid-cols-[minmax(0,27rem)_minmax(0,40rem)] lg:grid-cols-[minmax(0,27rem)_minmax(20rem,auto)] gap-8 responsive-layout">
+      <aside class="flex justify-center md:justify-start md:sticky md:top-20 z-10">
+        <CardUser :item="user"/>
+      </aside>
+      
       <div>
-        <h2 class="text-2xl">Collection</h2>
-        <div>
-          <div v-for="book in library" :key="book.id">
-            <appLink :to='`/libraries/${user?.slug}/${book?.id}-${book.book.slug}`'>
-              <h3>{{ book.book?.name }}</h3>
-              <p>{{ book.completed_pages.length }} / {{ book.book?.page_count }} - {{
-                calculateProgress(book.completed_pages.length, book.book?.page_count) }}</p>
-            </appLink>
-          </div>
+        <h1 class="text-h1 pb-6">Bibliothèque de {{ user?.user_name }}</h1>
+        <div class="grid lg:grid-cols-2 gap-2">
+          <CardLibraryBook v-for="item in library" :key="item.id" :item="item" :user-slug="user.slug" />
         </div>
       </div>
     </div>
-    <div v-else>
-      <p>Cet utilisateur n'a pas encore de livre dans sa collection</p>
-    </div>
-  </div>
+  </section>
 </template>
-
