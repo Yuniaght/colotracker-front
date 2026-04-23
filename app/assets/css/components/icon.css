@@ -11,3 +11,23 @@
     width: 1em;
     height: 1em;
 }
+
+.icon-discord {
+    mask: url('/svg/icons/discord.svg');
+    mask-position: center;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+
+    width: 1em;
+    height: 1em;
+}
+
+.icon-instagram {
+    mask: url('/svg/icons/instagram.svg');
+    mask-position: center;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+
+    width: 1em;
+    height: 1em;
+}

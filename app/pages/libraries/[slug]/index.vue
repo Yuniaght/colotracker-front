@@ -1,35 +1,3 @@
-<template>
-  <div>
-    <div>
-      <h1 class="text-3xl">Trackers de : {{ user?.user_name }}</h1>
-      <p v-if="user?.joined_at">Membre depuis :
-        <NuxtTime :datetime="user?.joined_at" />
-      </p>
-      <AppLink v-if="user?.instagram_link" :to="user?.instagram_link">Instagram</AppLink>
-      <p v-if="user?.discord_pseudonym">Discord : {{ user?.discord_pseudonym }}</p>
-    </div>
-    <div v-if="library && library?.length > 0">
-      <h2 class="text-2xl">Statistiques</h2>
-      <p>Pages complétée : {{ globalstats?.done }} / {{ globalstats?.total }} - {{ globalstats?.percent }}</p>
-      <div>
-        <h2 class="text-2xl">Collection</h2>
-        <div>
-          <div v-for="book in library" :key="book.id">
-            <appLink :to='`/libraries/${user?.slug}/${book?.id}-${book.book.slug}`'>
-              <h3>{{ book.book?.name }}</h3>
-              <p>{{ book.completed_pages.length }} / {{ book.book?.page_count }} - {{
-                calculateProgress(book.completed_pages.length, book.book?.page_count) }}</p>
-            </appLink>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div v-else>
-      <p>Cet utilisateur n'a pas encore de livre dans sa collection</p>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { Library, Book } from '~~/shared/types/directus';
 type EnrichedLibraryItem = Library & {
@@ -94,3 +62,36 @@ const globalstats = computed(() => {
   }
 })
 </script>
+
+<template>
+  <div>
+    <div>
+      <h1 class="text-3xl">Trackers de : {{ user?.user_name }}</h1>
+      <p v-if="user?.joined_at">Membre depuis :
+        <NuxtTime :datetime="user?.joined_at" />
+      </p>
+      <AppLink v-if="user?.instagram_link" :to="user?.instagram_link">Instagram</AppLink>
+      <p v-if="user?.discord_pseudonym">Discord : {{ user?.discord_pseudonym }}</p>
+    </div>
+    <div v-if="library && library?.length > 0">
+      <h2 class="text-2xl">Statistiques</h2>
+      <p>Pages complétée : {{ globalstats?.done }} / {{ globalstats?.total }} - {{ globalstats?.percent }}</p>
+      <div>
+        <h2 class="text-2xl">Collection</h2>
+        <div>
+          <div v-for="book in library" :key="book.id">
+            <appLink :to='`/libraries/${user?.slug}/${book?.id}-${book.book.slug}`'>
+              <h3>{{ book.book?.name }}</h3>
+              <p>{{ book.completed_pages.length }} / {{ book.book?.page_count }} - {{
+                calculateProgress(book.completed_pages.length, book.book?.page_count) }}</p>
+            </appLink>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <p>Cet utilisateur n'a pas encore de livre dans sa collection</p>
+    </div>
+  </div>
+</template>
+

@@ -10,7 +10,6 @@ export const useLibrary = () => {
 
   async function handleAddBook(bookId: string) {
     if (!user.value) return
-    console.log(bookId)
     isPending.value = true
     try {
       const existing = await $directus.request(
