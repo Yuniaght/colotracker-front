@@ -66,7 +66,7 @@ const publicLink = [
             </li>
 
             <li v-if="!user">
-              <AppLink :to="{ path: 'login' }">Connexion</AppLink>
+              <AppLink :to="{name: 'login' }">Connexion</AppLink>
             </li>
 
             <li v-else class="relative" ref="profileRef">

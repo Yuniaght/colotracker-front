@@ -31,6 +31,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         return options;
       }
     }));
+  
+  const sessionCookie = useCookie('directus_session_token');
 
   const fetchUser = async () => {
     if (user.value) return user.value
@@ -62,7 +64,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     }
   };
 
-  if (!user.value) {
+  if (!user.value && sessionCookie.value) {
     await fetchUser()
   }
 

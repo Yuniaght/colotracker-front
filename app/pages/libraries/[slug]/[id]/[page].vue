@@ -1,4 +1,5 @@
 <template>
+  <pre>{{ data }}</pre>
   <div>
     <h1 class="text-3xl">Page {{ data?.page_number }} du livre {{ data?.library_from?.book.name }} de {{
       data?.library_from?.user.user_name }}</h1>
@@ -23,12 +24,12 @@
 <script setup lang="ts">
 const { $directus, $readItem } = useNuxtApp()
 const route = useRoute()
-const page = parseInt((route.params.page as string) || '0')
+const page = computed(() => parseInt((route.params.page as string) || '0'))
 
 
 const { data: data, error } = await useAsyncData(`page-${page}`, () => {
   return $directus.request(
-    $readItem('completed_pages', page, {
+    $readItem('completed_pages', page.value, {
       fields: [
         "*",
         "library_from.book.name",

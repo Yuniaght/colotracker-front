@@ -39,7 +39,7 @@ if (!users.value || users.value.length === 0) {
 
 const user = users.value[0]
 
-const { data: library } = await useAsyncData(`library_${userSlug.value}`, () => {
+const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, () => {
   return $directus.request(
     $readItems('library', {
       fields: [
@@ -86,7 +86,7 @@ const { data: library } = await useAsyncData(`library_${userSlug.value}`, () => 
       completed_pages: item.completed_pages?.length || 0 
     }))
   },
-  watch: [user] 
+  watch: [users] 
 },
 )
 
