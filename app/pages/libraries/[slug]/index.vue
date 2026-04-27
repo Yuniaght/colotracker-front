@@ -95,7 +95,7 @@ const { data: library } = await useAsyncData(`library_${userSlug.value}`, () => 
 
 <template>
   <section class="responsive-padding-x responsive-padding-y">
-    <div class="mb-6">
+    <div class="mb-6 responsive-layout">
       <AppLink to="/libraries" class="text-emerald-blue">
         ⬅ Retour aux trackers
       </AppLink>
