@@ -77,7 +77,7 @@ const options = {
 </script>
 
 <template>
-  <section class="w-full h-[550px] md:h-100 relative overflow-hidden ">
+  <section class="w-full h-[550px] md:h-100 relative">
     <div class="absolute inset-0 bg-linear-180 from-rose-red to-skin-orange"></div>
     <div class="absolute inset-0 bg-linear-135 from-transparent via-transparent to-light-green"></div>
     <div class="relative z-10 flex flex-col items-center justify-center h-full text-center gap-4 px-6 py-16">
@@ -93,7 +93,7 @@ const options = {
       </div>
     </div>
   </section>
-  <SectionSlider class="responsive-padding-y responsive-padding-x text-center" :x-spacing="0" :options="options">
+  <SectionSlider class="responsive-padding-y responsive-padding-x text-center overflow-hidden" :x-spacing="0" :options="options">
     <template #header>
       <h2 class="text-h2 mb-4">Les dernières réalisations</h2>
       <p class="text-h3 text-emerald-blue mb-4">Regardez les derniers coloriages de nos membres</p>
