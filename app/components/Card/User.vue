@@ -38,7 +38,7 @@ function copyToClipboard(stringToCopy: string){
       <nuxt-picture v-else src="/img/defaultavatar.jpg" alt="avatar par défaut" />
     </div>
     <h2 class="text-h2 text-center">{{ item.user_name }}</h2>
-    <p class="text-center pb-2">Membre depuis le {{ formatDate(item.joined_at) }}</p>
+    <p class="text-center pb-2">Membre depuis le <nuxt-time :datetime="item.joined_at" locale="fr-FR" year="numeric" month="long" day="numeric"/></p>
     <div class="text-center pb-2">
       <AppLink v-if="item.instagram_link" :to="item.instagram_link" class="text-2xl pr-6"><i class="icon icon-instagram"/></AppLink>
       <span v-else class="text-dark-navy/20 text-2xl pr-6"><i class="icon icon-instagram"/></span>

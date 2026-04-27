@@ -99,7 +99,7 @@ const userConnected = computed(() => !!user.value)
         <div class="p-6">
           <p class="pb-2 border-b-2 border-dark-navy/15">Informations</p>
           <p class="flex justify-between"><span>Nombre de pages :</span><span>{{ book.page_count }}</span></p>
-          <p class="flex justify-between"><span>Date de sortie :</span><span>{{ formatDate(book.release_date) }}</span></p>
+          <p class="flex justify-between"><span>Date de sortie :</span> <nuxt-time :datetime="book.release_date" year="numeric" month="long" day="numeric"/></p>
           <p class="flex justify-between"><span>Lien d'achat :</span><AppLink :to="book.store_link" class="text-emerald-blue">Acheter ce livre</AppLink></p>
         </div>
         <div>
