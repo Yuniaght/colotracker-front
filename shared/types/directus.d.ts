@@ -1,15 +1,43 @@
-export interface AskedBook {
+export interface About {
 	/** @primaryKey */
 	id: number;
 	/** @required */
+	main_title: string;
+	sub_title?: string | null;
+	hero_title?: string;
+	Contenu?: Array<{ Texte: string }>;
+	mission_title?: string | null;
+	mission_content?: Array<{ title: string; content: string }>;
+	how_to_title?: string | null;
+	how_to_content?: Array<{ title: string; content: string }>;
+	faq_section_title?: string | null;
+	faq_content?: Array<{ title: string; content: string }>;
+	CTA_title?: string | null;
+	cta_content?: string;
+	buttons?: Array<{ button_name: string; button_location: string }> | null;
+}
+
+export interface AskedBook {
+	/** @primaryKey */
+	id: number;
+	/** @description Nom de parution du livre @required */
 	book_name: string;
 	/** @required */
 	book_front_cover: DirectusFile | string;
 	author?: string | null;
 	page_count?: number | null;
+	/** @description (Amazon, Etsy, ...) */
 	store_link?: string | null;
 	requested_number?: number | null;
 	release_date?: string | null;
+	category_list?: AskedBookCategoryList[] | string[];
+}
+
+export interface AskedBookCategoryList {
+	/** @primaryKey */
+	id: number;
+	asked_book_id?: AskedBook | string | null;
+	category_list_id?: CategoryList | string | null;
 }
 
 export interface Author {
@@ -22,10 +50,12 @@ export interface Author {
 export interface Book {
 	/** @primaryKey */
 	id: number;
-	name?: string | null;
+	/** @required */
+	name: string;
 	front_cover?: DirectusFile | string | null;
 	page_count?: number | null;
 	release_date?: string | null;
+	/** @description (Amazon, Etsy, ... */
 	store_link?: string | null;
 	author?: Author | string | null;
 	slug?: string | null;
@@ -578,7 +608,9 @@ export interface DirectusDeploymentRun {
 }
 
 export interface Schema {
+	about: About;
 	asked_book: AskedBook[];
+	asked_book_category_list: AskedBookCategoryList[];
 	author: Author[];
 	books: Book[];
 	books_category_list: BooksCategoryList[];
@@ -619,7 +651,9 @@ export interface Schema {
 }
 
 export enum CollectionNames {
+	about = 'about',
 	asked_book = 'asked_book',
+	asked_book_category_list = 'asked_book_category_list',
 	author = 'author',
 	books = 'books',
 	books_category_list = 'books_category_list',
