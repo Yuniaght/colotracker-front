@@ -33,6 +33,33 @@ const { data: users, pending, error } = await useAsyncData(`user_${userSlug.valu
   )
 })
 
+const { values, defineField } = useForm<{
+  search: string,
+}>({
+  initialValues: {
+    search: (route.query.search as string) || "",
+  }
+})
+const [searchedQuery] = defineField('search')
+const debouncedSearch = refDebounced(searchedQuery, 400)
+const fetchFilters = computed(() => {
+  if (!user?.id) return { id: { _null: true } }
+  const queryFilter: any = { _and: [{ user: { _eq: user?.id } }] }
+
+  if (debouncedSearch.value) {
+    queryFilter._and.push({
+      book:{
+        _or: [
+          { name: { _icontains: debouncedSearch.value } },
+          { author: { full_name: { _icontains: debouncedSearch.value } } }
+        ]
+      }
+    })
+  }
+  return queryFilter
+})
+
+
 if (!users.value || users.value.length === 0) {
   throw createError({ statusCode: 404, statusMessage: 'Utilisateur introuvable' })
 }
@@ -67,15 +94,7 @@ const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, ()
       ],
       limit: bookPerPage,
       sort: ["book.name"],
-      filter: {
-        _and: [
-          {
-            user: {
-              _eq: user?.id
-            }
-          }
-        ]
-      }
+      filter: fetchFilters.value
     })
   )
 }, 
@@ -86,10 +105,18 @@ const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, ()
       completed_pages: item.completed_pages?.length || 0 
     }))
   },
-  watch: [users] 
+  watch: [users, fetchFilters] 
 },
 )
 
+watch([searchedQuery], ([newSearch]) => {
+  navigateTo({
+    query: {
+      ...route.query,
+      search: newSearch || undefined,
+    }
+  }, { replace: true })
+})
 
 </script>
 
@@ -107,6 +134,12 @@ const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, ()
       
       <div>
         <h1 class="text-h1 pb-6">Bibliothèque de {{ user?.user_name }}</h1>
+        <form @submit.prevent class="mb-10 space-y-6">
+        <div class="responsive-layout">
+          <input v-model="searchedQuery" id="search" type="text" placeholder="Rechercher un livre, un illustrateur..."
+            class="text-sm shadow-sm w-full px-6 py-4 border border-dark-navy/50 rounded-4xl" />
+        </div>
+      </form>
         <div class="grid lg:grid-cols-2 gap-2">
           <CardLibraryBook v-for="item in library" :key="item.id" :item="item" :user-slug="user.slug" />
         </div>
