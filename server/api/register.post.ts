@@ -3,6 +3,7 @@ import { registrationFormConfig } from '~~/server/utils/composables/useRegistrat
 import {parseMultiPartData, splitBodyFiles} from "~~/server/utils/composables/parseMultiPartData";
 import * as z from 'zod';
 import type {ZodError} from "zod";
+const config = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
     const form = registrationFormConfig;
@@ -55,6 +56,7 @@ export default defineEventHandler(async (event) => {
         
         const newUser = await directus.request(createUser({
             ...userData,
+            role: config.public.userRoleId,
             avatar: avatarId
         }));
         

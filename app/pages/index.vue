@@ -93,7 +93,7 @@ const options = {
       </div>
     </div>
   </section>
-  <SectionSlider class="responsive-padding-y responsive-padding-x text-center overflow-hidden" :x-spacing="0" :options="options">
+  <SectionSlider class="responsive-padding-y text-center overflow-clip" :x-spacing="0" :options="options">
     <template #header>
       <h2 class="text-h2 mb-4">Les dernières réalisations</h2>
       <p class="text-h3 text-emerald-blue mb-4">Regardez les derniers coloriages de nos membres</p>

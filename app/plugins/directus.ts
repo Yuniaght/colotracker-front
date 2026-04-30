@@ -65,7 +65,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   };
 
   if (!user.value && sessionCookie.value) {
-    await fetchUser()
+    fetchUser()
   }
 
   const refreshToken = async () => {
