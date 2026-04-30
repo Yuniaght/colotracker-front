@@ -75,6 +75,15 @@ export interface CategoryList {
 	name?: string | null;
 }
 
+export interface Cgu {
+	/** @primaryKey */
+	id: number;
+	version?: string | null;
+	/** @required */
+	update_date: string;
+	content?: string | null;
+}
+
 export interface CompletedPage {
 	/** @primaryKey */
 	id: number;
@@ -615,6 +624,7 @@ export interface Schema {
 	books: Book[];
 	books_category_list: BooksCategoryList[];
 	category_list: CategoryList[];
+	cgu: Cgu;
 	completed_pages: CompletedPage[];
 	directus_users: DirectusUser[];
 	library: Library[];
@@ -658,6 +668,7 @@ export enum CollectionNames {
 	books = 'books',
 	books_category_list = 'books_category_list',
 	category_list = 'category_list',
+	cgu = 'cgu',
 	completed_pages = 'completed_pages',
 	directus_users = 'directus_users',
 	library = 'library',
