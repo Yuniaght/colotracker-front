@@ -3,7 +3,7 @@ import type { SwiperOptions } from 'swiper/types'
 import { aggregate } from '@directus/sdk'
 const { $directus, $readItems } = useNuxtApp()
 
-const {data, error} = await useLazyAsyncData('latest-drawings', () => {
+const {data, error} = await useAsyncData('latest-drawings', () => {
   return $directus.request(
     $readItems('completed_pages', {
       fields: [
@@ -93,7 +93,7 @@ const options = {
       </div>
     </div>
   </section>
-  <SectionSlider class="responsive-padding-y text-center overflow-clip" :x-spacing="0" :options="options">
+  <SectionSlider v-if="data?.length" class="responsive-padding-y text-center overflow-clip" :x-spacing="0" :options="options">
     <template #header>
       <h2 class="text-h2 mb-4">Les dernières réalisations</h2>
       <p class="text-h3 text-emerald-blue mb-4">Regardez les derniers coloriages de nos membres</p>

@@ -72,14 +72,18 @@ const isLoaded = ref(false)
 
 onMounted(() => {
   initSwiper()
+  swiperElement.value!.addEventListener('swiperinit', (e: any) => {
+    const swiper = e.detail[0]
+    swiper.autoplay?.start()
+  })
   swiperElement.value!.initialize();
 
   isLoaded.value = true;
-});
+});;
 </script>
 
 <template>
-  <section>
+  <section> 
     <div :class="[spacing.x]" v-if="$slots.header">
       <div class="responsive-layout">
         <slot name="header"></slot>
