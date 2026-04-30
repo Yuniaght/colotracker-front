@@ -1,0 +1,25 @@
+.directus-content h1,
+.directus-content h2,
+.directus-content h3 {
+  @apply font-poppins;
+  line-height: 125%;
+}
+
+.directus-content h1 {
+  @apply text-[28px] my-4;
+}
+.directus-content h2 {
+  @apply text-2xl my-3;
+}
+.directus-content h3 {
+  @apply text-xl my-2;
+}
+.directus-content p {
+  @apply my-4 leading-relaxed;
+}
+.directus-content ul {
+  @apply list-disc ml-8
+}
+.directus-content a {
+  @apply text-rose-red underline-offset-1 underline
+}
