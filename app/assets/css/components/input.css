@@ -9,3 +9,19 @@
 .input-error {
   @apply border-rose-red
 }
+
+.radio-chip {
+    @apply bg-pure-white text-dark-navy hover:bg-rose-red;
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm transition duration-200 ease-in-out cursor-pointer ;
+    @apply rounded-2xl;
+
+    &.radio-chip--checked {
+        @apply bg-skin-orange;
+    }
+}
+
+input[type="radio"].radiobutton {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}

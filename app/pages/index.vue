@@ -106,7 +106,7 @@ const options = {
           provider="directus"
           :src="`${drawing.image?.id}/${drawing.image?.filename_download}`"
           :alt="drawing.image?.title"
-          loading="lazy"
+          width="335px"
           :img-attrs="{ class: 'object-cover size-full absolute inset-0 -z-10 ' }" />
           <div class="absolute w-full bottom-0 p-6 bg-dark-navy/50 text-dim-white"> 
             {{ drawing.library_from?.user?.user_name }}

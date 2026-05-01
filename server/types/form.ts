@@ -12,6 +12,7 @@ export interface Form<
         query?: Query;
         headers?: Headers;
     };
+    getSubject?: (body: z.infer<Body>) => string
     /**
      * Keys of the files to be uploaded
      * Important to use this option when you want to upload multiple files

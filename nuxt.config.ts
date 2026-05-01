@@ -5,13 +5,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   devServer: {
-    host: '127.0.0.1'
+    host: '0.0.0.0'
   },
 
   runtimeConfig: {
     directusAdminToken: process.env.DIRECTUS_TOKEN,
     public: {
-      directusUrl: process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://127.0.0.1:8055',
+      directusUrl: process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055',
       superAdminRoleId: process.env.NUXT_PUBLIC_SUPER_ADMIN_ROLE_ID,
       adminRoleId: process.env.NUXT_PUBLIC_ADMIN_ROLE_ID,
       moderatorRoleId: process.env.NUXT_PUBLIC_MODERATOR_ROLE_ID,
@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-  "/directus/**": { proxy: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://127.0.0.1:8055'}/**` } 
+  "/directus/**": { proxy: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/**` } 
   },
 
   modules: [
@@ -39,7 +39,7 @@ export default defineNuxtConfig({
 
   image: {
     directus: {
-      baseURL: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://127.0.0.1:8055'}/assets`,
+      baseURL: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/assets`,
     }
   },
 

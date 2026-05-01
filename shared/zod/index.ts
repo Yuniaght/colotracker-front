@@ -29,6 +29,7 @@ const askABookPartial = zod.object({
 const commonContactPartial = zod.object({
   lastName: zod.string().min(1).max(100),
   firstName: zod.string().min(1).max(100),
+  email: zod.email(),
   subject: zod.string().min(1).max(300),
   message: zod.string().min(1),
   privacy: zod.coerce.boolean().refine(value => {
