@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 const links = [
-  {path: '/', name: "Accueil"},
-  {path: 'books', name: "Livres"},
-  {path: 'libraries', name: "Trackers"},
-  {path: 'about', name: "A propos"},
-  {path: 'contact', name: "Contact"},
+  {path: {name: 'index'}, text: "Accueil"},
+  {path: {name: 'books'}, text: "Livres"},
+  {path: {name: 'libraries'}, text: "Trackers"},
+  {path: {name: 'about'}, text: "A propos"},
+  {path: {name: 'contact'}, text: "Contact"},
   ]
 </script>
 
@@ -19,7 +19,7 @@ const links = [
           </div>
           <nav class="flex gap-2 justify-center grow text-sm md:text-base">
             <AppLink v-for="link in links" :to="link.path">
-              {{ link.name }}
+              {{ link.text }}
             </AppLink>
           </nav>
         </div>

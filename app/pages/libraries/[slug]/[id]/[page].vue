@@ -81,7 +81,8 @@ const book = computed(() => data.value?.library_from?.book)
             provider="directus" 
             :src="`${data?.image?.id}/${data?.image?.filename_download}`" 
             :alt="data?.image?.title" 
-            :img-attrs="{ class: 'w-full h-full object-cover' }" 
+            :img-attrs="{ class: 'w-full h-full object-cover' }"
+            width="190px"
             />
       </div>
       <div class="p-8 bg-pure-white shadow-xl">

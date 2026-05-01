@@ -14,9 +14,10 @@ import {
 import type { Schema } from '~~/shared/types/directus';
 
 export default defineNuxtPlugin(async (nuxtApp) => {
+  const config = useRuntimeConfig()
   const headers = useRequestHeaders(['cookie'])
   const user = useDirectusUser()
-  const directus = createDirectus<Schema>('http://localhost:8055')
+  const directus = createDirectus<Schema>(config.public.directusUrl || "http://localhost:8055")
     .with(authentication("session", { credentials: "include" }))
     .with(rest({
       onRequest: (options) => {
