@@ -89,9 +89,9 @@ const book = computed(() => data.value?.library_from?.book)
         <div class="flex items-center gap-3 pb-3">
           <div class="w-16 h-16 rounded-full border-2 border-skin-orange overflow-clip">
               <nuxt-picture 
-                v-if="user != null" 
+                v-if="data?.library_from.user.avatar != null" 
                 provider="directus"
-                :src="`${user.avatar?.id}/${user.avatar.filename_download}`" 
+                :src="`${data?.library_from.user.avatar?.id}/${data?.library_from.user.avatar.filename_download}`" 
                 :alt="user.avatar.title" 
                 sizes="64px"
                 />
