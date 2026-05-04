@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const user = useDirectusUser()
+const config = useRuntimeConfig()
 const isOpen = ref(false)
 const isProfileOpen = ref(false)
 const profileRef = ref(null)
@@ -86,6 +87,10 @@ const publicLink = [
                 <AppLink to="/profile" class="w-full text-center py-2 hover:bg-gray-50" @click="toggleProfile">
                   Mon profil
                 </AppLink>
+
+                <AppLink :to="config.public.directusUrl + '/admin/content'" v-if="user.role === config.public.superAdminRoleId || user.role === config.public.adminRoleId" class="w-full text-center py-2 hover:bg-gray-50" @click="toggleProfile">
+                  Administration
+                </AppLink>
                 <button @click="$logout(); toggleProfile"
                   class="w-full text-center py-2 cursor-pointer text-rose-red hover:text-dark-navy">
                   Déconnexion
@@ -103,16 +108,18 @@ const publicLink = [
       </div>
 
       <div v-if="isOpen" class="lg:hidden absolute top-full left-0 w-full z-100 bg-dim-white" ref="mobileMenuRef">
-        <div class="flex flex-col items-center py-6 space-y-4">
-          <div v-if="user" class="flex flex-col items-center space-y-4 w-full">
+        <div class="flex flex-col items-center gap-4 py-6">
+          <div v-if="user" class="flex flex-col gap-4 items-center w-full">
             <div class="w-16 h-16 rounded-full border-2 border-skin-orange overflow-clip">
               <nuxt-picture v-if="user.avatar != null" provider="directus"
                 :src="`${user.avatar.id}/${user.avatar.filename_download}`" :alt="user.avatar.title" />
               <nuxt-picture v-else src="/img/defaultavatar.jpg" alt="avatar par défaut" />
             </div>
             <AppLink @click="isOpen = false" to="/profile">Mon profil</AppLink>
+            <AppLink :to="config.public.directusUrl + '/admin/content'" v-if="user.role === config.public.superAdminRoleId || user.role === config.public.adminRoleId" class="w-full text-center hover:bg-gray-50" @click="toggleProfile">
+                  Administration
+            </AppLink>
           </div>
-
           <AppLink v-for="link in publicLink" @click="isOpen = false" :to="link.path">{{ link.name }}</AppLink>
           <template v-if="!user">
             <AppLink @click="isOpen = false" to="/login">Connexion</AppLink>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import User from '~/components/Card/User.vue'
-
 const { $directus, $readItem } = useNuxtApp()
 const route = useRoute()
 const id = route.params.id as string
