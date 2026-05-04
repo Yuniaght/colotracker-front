@@ -1,12 +1,15 @@
-import { createItem } from "@directus/sdk"
+import { createItem, deleteItem } from "@directus/sdk"
 
 export const useLibrary = () => {
-
   const { $directus, $readItems } = useNuxtApp()
   const user = useDirectusUser()
+  
+
   const isConfirmModalOpen = ref(false)
   const bookToProcess = ref<string | null>(null)
   const isPending = ref(false)
+  const isDeleteModalOpen = ref(false)
+  const itemToDelete = ref<string | number | null>(null)
 
   async function handleAddBook(bookId: string) {
     if (!user.value) return
@@ -51,6 +54,30 @@ export const useLibrary = () => {
     }
   }
 
+  function confirmDelete(libraryId: string | number) {
+    itemToDelete.value = libraryId
+    isDeleteModalOpen.value = true
+  }
+
+  async function executeDeletion(onSuccess?: () => void) {
+    if (!itemToDelete.value) return
+    
+    const { $toast } = useNuxtApp()
+    isPending.value = true
+    try {
+      await $directus.request(deleteItem('library', itemToDelete.value))
+      $toast.success('Livre retiré de votre bibliothèque')
+      if (onSuccess) onSuccess()
+    } catch (e) {
+      $toast.error("Erreur lors de la suppression")
+      console.error(e)
+    } finally {
+      isPending.value = false
+      isDeleteModalOpen.value = false
+      itemToDelete.value = null
+    }
+  }
+
   function handleModalConfirm() {
     if (bookToProcess.value) {
       executeCreation(bookToProcess.value)
@@ -64,7 +91,10 @@ export const useLibrary = () => {
   return {
     handleAddBook,
     handleModalConfirm,
+    confirmDelete,      
+    executeDeletion,    
     isConfirmModalOpen,
+    isDeleteModalOpen, 
     isPending
   }
 }

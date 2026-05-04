@@ -48,6 +48,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
           "instagram_link",
           "moderated_count",
           "status",
+          "slug",
           {
             avatar: [
               "id",
