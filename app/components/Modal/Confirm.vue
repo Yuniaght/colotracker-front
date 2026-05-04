@@ -1,8 +1,6 @@
 <script setup lang="ts">
 defineProps<{
   isOpen: boolean;
-  title: string;
-  message: string;
 }>();
 
 const emit = defineEmits(['confirm', 'close']);
@@ -23,10 +21,10 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
 
         <div class="relative bg-white w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl overflow-hidden border border-dark-navy/5">
           <div class="text-center">
-            <h3 class="text-2xl font-bold text-dark-navy mb-4">{{ title }}</h3>
-            <p class="text-gray-600 mb-8 leading-relaxed">
-              {{ message }}
-            </p>
+            <h3 class="text-2xl font-bold text-dark-navy mb-4">
+              <slot name="title" />
+            </h3>
+            <slot name="message" />
           </div>
 
           <div class="flex flex-col sm:flex-row gap-3">
@@ -40,7 +38,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
               @click="emit('confirm')" 
               class="flex-1 px-6 py-4 rounded-full bg-rose-red text-white font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-rose-red/20"
             >
-              Oui, ajouter
+              <slot name="confirmText" />
             </button>
           </div>
         </div>

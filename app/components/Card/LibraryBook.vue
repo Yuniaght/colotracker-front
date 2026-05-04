@@ -14,14 +14,18 @@ const { item, userSlug } = defineProps<{
     },
     completed_pages: number,
   },
-  userSlug: string
+  userSlug?: string,
+  target: string,
+  deleteButton?: boolean
 }>()
+
+defineEmits(['removeFromLibrary'])
 </script>
 <template>
   <nuxt-link :to="{
-    name: 'libraries-slug-id',
+    name: target,
     params: {
-      slug: userSlug,
+      ...(userSlug && { slug: userSlug }),
       id: `${item.id}-${item.book.slug}`
     }
   }" class="bg-pure-white w-full rounded-2xl shadow block overflow-hidden">
@@ -48,6 +52,11 @@ const { item, userSlug } = defineProps<{
         <div class="h-2 bg-linear-90 from-rose-red to-skin-orange rounded-full"
           :style="'width:' + calculateProgress(item?.completed_pages, item?.book.page_count)" />
       </div>
+    </div>
+    <div class="pb-4 px-4">
+      <AppButton v-if="deleteButton" theme="rose-red" class="w-full" @click.stop.prevent="$emit('removeFromLibrary', item.id)">
+        Retirer de ma bibliothèque
+      </AppButton>
     </div>
   </nuxt-link>
 </template>

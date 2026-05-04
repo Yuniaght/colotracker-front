@@ -142,9 +142,19 @@ watch([searchedQuery, selectedCategories], ([newSearch, newCats]) => {
   </section>
   <ModalConfirm 
     :is-open="isConfirmModalOpen"
-    title="Livre déjà possédé"
-    message="Vous avez déjà ce livre dans votre collection. Voulez-vous vraiment ajouter un exemplaire supplémentaire ?"
     @close="isConfirmModalOpen = false"
     @confirm="handleModalConfirm"
-  />    
+  >
+    <template #title>
+    Livre déjà possédé
+  </template>
+  <template #message>
+    <p class="pb-2">
+      Vous avez déjà ce livre dans votre collection. Voulez-vous vraiment ajouter un exemplaire supplémentaire ?
+    </p>
+  </template>
+  <template #confirmText>
+    Ajouter le livre
+  </template>
+  </ModalConfirm>    
 </template>

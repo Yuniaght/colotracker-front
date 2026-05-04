@@ -141,7 +141,7 @@ watch([searchedQuery], ([newSearch]) => {
         </div>
       </form>
         <div class="grid lg:grid-cols-2 gap-2">
-          <CardLibraryBook v-for="item in library" :key="item.id" :item="item" :user-slug="user.slug" />
+          <CardLibraryBook v-for="item in library" :key="item.id" :item="item" :user-slug="user.slug" target="libraries-slug-id" />
         </div>
       </div>
     </div>
