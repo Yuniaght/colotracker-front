@@ -67,7 +67,7 @@ export const useLibrary = () => {
     try {
       await $directus.request(deleteItem('library', itemToDelete.value))
       $toast.success('Livre retiré de votre bibliothèque')
-      if (onSuccess) onSuccess()
+      if (onSuccess) await onSuccess()
     } catch (e) {
       $toast.error("Erreur lors de la suppression")
       console.error(e)

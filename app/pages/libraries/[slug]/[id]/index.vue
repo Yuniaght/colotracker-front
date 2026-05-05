@@ -82,7 +82,7 @@ const handleInfiniteScroll = () => {
     <div class="pb-6">
       <AppLink :to="{name : 'libraries-slug', params: {slug: slug}}">⬅ Retour</AppLink>
     </div>
-    <div class="grid xl:grid-cols-[343.5px_auto] bg-linear-180 from-light-green to-emerald-blue rounded-2xl overflow-clip">
+    <div class="grid xl:grid-cols-[343.5px_auto] bg-fixed bg-linear-180 from-light-green to-emerald-blue rounded-2xl overflow-clip">
       <div class="text-center p-6 ">
         <div class="w-48 mb-4 border-2 border-dark-navy rounded-2xl mx-auto overflow-clip">
           <nuxt-picture 
