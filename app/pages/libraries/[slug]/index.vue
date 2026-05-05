@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const { $directus, $readUsers, $readItems } = useNuxtApp()
 const route = useRoute()
-const bookPerPage = 10
-const page = ref(1)
 const userSlug = computed(() => route.params.slug as string)
+const libraryData = ref(null) 
+const fetchingBooks = ref(false)
+const { page, items: libraryItems, hasMore, handleLoadMore, resetPagination, pageSize } = useInfiniteScroll(libraryData, fetchingBooks, { pageSize: 10 })
 
-const { data: users, pending, error } = await useAsyncData(`user_${userSlug.value}`, () => {
+const { data: users, pending: fetchingUser, error: fetchUserError } = await useAsyncData(`user_${userSlug.value}`, () => {
   return $directus.request(
     $readUsers({
       fields: [
@@ -67,7 +68,7 @@ if (!users.value || users.value.length === 0) {
 
 const user = users.value[0]
 
-const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, () => {
+const { data: library, pending, error: libraryError } = await useLazyAsyncData(`library_${userSlug.value}`, () => {
   return $directus.request(
     $readItems('library', {
       fields: [
@@ -93,7 +94,7 @@ const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, ()
           ]
         }
       ],
-      limit: bookPerPage,
+      limit: pageSize,
       page: page.value,
       sort: ["book.name"],
       filter: fetchFilters.value
@@ -111,20 +112,12 @@ const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, ()
 },
 )
 
-const libraryItems = ref([...(library.value || [])])
+syncRefs(library, libraryData)
+syncRefs(pending, fetchingBooks)
 
-watch(library, (newItems) => {
-  if (!newItems) return
-  
-  if (page.value === 1) {
-    libraryItems.value = [...newItems]
-  } else {
-    libraryItems.value.push(...newItems)
-  }
-})
 
 watch(fetchFilters, () => {
-  page.value = 1
+  resetPagination()
 })
 
 watch([searchedQuery], ([newSearch]) => {
@@ -135,12 +128,6 @@ watch([searchedQuery], ([newSearch]) => {
     }
   }, { replace: true })
 })
-
-const handleInfiniteScroll = () => {
-  if (pending.value) return
-  if (!library.value || library.value.length === 0) return
-  page.value++
-}
 </script>
 
 <template>
@@ -166,7 +153,7 @@ const handleInfiniteScroll = () => {
         <div class="grid lg:grid-cols-2 gap-2">
           <CardLibraryBook v-for="item in libraryItems" :key="item.id" :item="item" :user-slug="user.slug" target="libraries-slug-id" />
         </div>
-        <AppInfiniteScrollingTrigger v-if="!pending && library?.length === bookPerPage" @trigger="handleInfiniteScroll"/> 
+        <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
       </div>
     </div>
   </section>
