@@ -15,9 +15,13 @@ export function useInfiniteScroll<T>(
   watch(dataSource, (newItems) => {
     if (!newItems) return
     if (page.value === 1) {
-      items.value = [...newItems]
+      items.value = newItems ? [...newItems] : []
+    return
+    }
+    if (newItems && newItems.length > 0) {
+    items.value.push(...newItems)
     } else {
-      items.value.push(...newItems)
+      
     }
   }, { immediate: true })
 

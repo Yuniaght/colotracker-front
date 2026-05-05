@@ -3,7 +3,9 @@ const { handleAddBook, isConfirmModalOpen, handleModalConfirm } = useLibrary()
 const { $directus, $readItems } = useNuxtApp()
 const user = useDirectusUser()
 const route = useRoute()
-const BooksPerPage = 16
+const booksData = ref(null) 
+const fetchingBooks = ref(false)
+const { page, items: booksItems, hasMore, handleLoadMore, resetPagination, pageSize } = useInfiniteScroll(booksData, fetchingBooks, { pageSize: 12 })
 
 const { values, defineField } = useForm<{
   search: string,
@@ -51,7 +53,7 @@ const fetchFilters = computed(() => {
   return queryFilter
 })
 
-const { data: books, pending, error: bookFetchError } = await useLazyAsyncData(
+const { data: books, pending, error: bookFetchError } = await useAsyncData(
   'books-list',
   () => $directus.request(
     $readItems('books', {
@@ -62,15 +64,23 @@ const { data: books, pending, error: bookFetchError } = await useLazyAsyncData(
         { front_cover: ["id", "filename_download", "title"] },
         { author: ["full_name"] }
       ],
-      limit: BooksPerPage,
+      limit: pageSize,
+      page: page.value,
       filter: fetchFilters.value,
       sort: ['name']
     })
   ),
   {
-    watch: [fetchFilters]
+    watch: [fetchFilters, page]
   }
 )
+
+syncRefs(books, booksData)
+syncRefs(pending, fetchingBooks)
+
+watch(fetchFilters, () => {
+  resetPagination()
+})
 
 const { data: categories, error: categoriesFetchError } = await useLazyAsyncData(
   'categories-list',
@@ -123,17 +133,15 @@ watch([searchedQuery, selectedCategories], ([newSearch, newCats]) => {
 
       </form>
     </div>
-    <div v-if="pending" class="text-h2">Chargement des livres</div>
+    <div v-if="fetchingBooks" class="text-h2">Chargement des livres</div>
     <div v-else-if="bookFetchError" class="text-rose-red">
       Une erreur est survenue lors de la récupération des livres.
     </div>
-    <div v-if="books && books.length > 0"
+    <div v-if="booksItems && booksItems.length > 0"
       class="grid responsive-layout justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      <CardBook v-for="item in books" :key="item.slug" :item :user-connected="userConnected" @add-to-library="handleAddBook" />
+      <CardBook v-for="item in booksItems" :key="item.slug" :item :user-connected="userConnected" @add-to-library="handleAddBook" />
     </div>
-    <div v-else>
-      Il n'y a pas de livre
-    </div>
+    <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
   </section>
   <section class="responsive-padding-y responsive-padding-x text-center">
     <h2 class="text-h2 mb-6">Votre livre n'est pas dans la liste?</h2>
