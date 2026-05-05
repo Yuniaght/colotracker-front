@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const { $directus, $readUsers, $readItems } = useNuxtApp()
 const route = useRoute()
-const bookPerPage = 20
+const bookPerPage = 10
+const page = ref(1)
 const userSlug = computed(() => route.params.slug as string)
 
 const { data: users, pending, error } = await useAsyncData(`user_${userSlug.value}`, () => {
@@ -93,6 +94,7 @@ const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, ()
         }
       ],
       limit: bookPerPage,
+      page: page.value,
       sort: ["book.name"],
       filter: fetchFilters.value
     })
@@ -105,9 +107,25 @@ const { data: library } = await useLazyAsyncData(`library_${userSlug.value}`, ()
       completed_pages: item.completed_pages?.length || 0 
     }))
   },
-  watch: [users, fetchFilters] 
+  watch: [users, fetchFilters, page] 
 },
 )
+
+const libraryItems = ref([...(library.value || [])])
+
+watch(library, (newItems) => {
+  if (!newItems) return
+  
+  if (page.value === 1) {
+    libraryItems.value = [...newItems]
+  } else {
+    libraryItems.value.push(...newItems)
+  }
+})
+
+watch(fetchFilters, () => {
+  page.value = 1
+})
 
 watch([searchedQuery], ([newSearch]) => {
   navigateTo({
@@ -118,6 +136,11 @@ watch([searchedQuery], ([newSearch]) => {
   }, { replace: true })
 })
 
+const handleInfiniteScroll = () => {
+  if (pending.value) return
+  if (!library.value || library.value.length === 0) return
+  page.value++
+}
 </script>
 
 <template>
@@ -141,8 +164,9 @@ watch([searchedQuery], ([newSearch]) => {
         </div>
       </form>
         <div class="grid lg:grid-cols-2 gap-2">
-          <CardLibraryBook v-for="item in library" :key="item.id" :item="item" :user-slug="user.slug" target="libraries-slug-id" />
+          <CardLibraryBook v-for="item in libraryItems" :key="item.id" :item="item" :user-slug="user.slug" target="libraries-slug-id" />
         </div>
+        <AppInfiniteScrollingTrigger v-if="!pending && library?.length === bookPerPage" @trigger="handleInfiniteScroll"/> 
       </div>
     </div>
   </section>
