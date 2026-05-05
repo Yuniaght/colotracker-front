@@ -41,7 +41,12 @@ const { data: data } = await useAsyncData(`book-${id}`, () => {
             }
           ]
         }
-      ]
+      ],
+      deep: {
+        completed_pages: {
+          _limit: -1
+        }
+      }
     })
   )
 })
@@ -55,14 +60,20 @@ const completed_pages = computed(() => {
   return data.value.completed_pages
 })
 
+const visibleCount = ref(100)
 const showLimit = computed(() => {
-  if (book.value?.page_count > 100) return 100
-  else return book.value?.page_count
+  const total = book.value?.page_count || 0
+  return Math.min(visibleCount.value, total)
 })
+
 const book = computed(() => { return data.value?.book })
 
 const getCompletedPage = (pageNumber: number) => {
   return completed_pages.value.find((p: any) => p.page_number === pageNumber)
+}
+
+const handleInfiniteScroll = () => {
+  visibleCount.value += 100
 }
 </script>
 
@@ -108,6 +119,7 @@ const getCompletedPage = (pageNumber: number) => {
           <p v-else class="text-h2">{{ n }}</p>
         </div>
       </div>
+      <AppInfiniteScrollingTrigger v-if="showLimit < (book?.page_count || 0)" @trigger="handleInfiniteScroll" />
     </div>
   </section>
 </template>
