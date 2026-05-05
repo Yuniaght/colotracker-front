@@ -3,8 +3,9 @@ const { isDeleteModalOpen, confirmDelete, executeDeletion } = useLibrary()
 const { $directus, $readItems } = useNuxtApp()
 const user = useDirectusUser()
 const route = useRoute()
-const bookPerPage = 20
-
+const booksData = ref(null) 
+const fetchingBooks = ref(false)
+const { page, items: booksItems, hasMore, handleLoadMore, resetPagination, pageSize } = useInfiniteScroll(booksData, fetchingBooks, { pageSize: 12 })
 const { values, defineField } = useForm<{
   search: string,
 }>({
@@ -30,7 +31,7 @@ const fetchFilters = computed(() => {
   return queryFilter
 })
 
-const { data: library, refresh } = await useLazyAsyncData(`library_${user.value!.slug}`, () => {
+const { data: books, pending, refresh } = await useAsyncData(`library_${user.value!.slug}`, () => {
   return $directus.request(
     $readItems('library', {
       fields: [
@@ -56,7 +57,8 @@ const { data: library, refresh } = await useLazyAsyncData(`library_${user.value!
           ]
         }
       ],
-      limit: bookPerPage,
+      limit: pageSize,
+      page: page.value,
       sort: ["book.name"],
       filter: fetchFilters.value
     })
@@ -69,13 +71,20 @@ const { data: library, refresh } = await useLazyAsyncData(`library_${user.value!
         completed_pages: item.completed_pages?.length || 0
       }))
     },
-    watch: [fetchFilters]
+    watch: [fetchFilters, page]
   },
 )
+
+syncRefs(books, booksData)
+syncRefs(pending, fetchingBooks)
 
 const confirmDeletionAndRefresh = () => {
   executeDeletion(() => refresh())
 }
+
+watch(fetchFilters, () => {
+  resetPagination()
+})
 
 watch([searchedQuery], ([newSearch]) => {
   navigateTo({
@@ -99,8 +108,9 @@ watch([searchedQuery], ([newSearch]) => {
       </div>
     </form>
     <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
-      <CardLibraryBook v-for="item in library" :key="item.id" :item="item" target="profile-mylibrary-id" delete-button @remove-from-library="confirmDelete"/>
+      <CardLibraryBook v-for="item in booksItems" :key="item.id" :item="item" target="profile-mylibrary-id" delete-button @remove-from-library="confirmDelete"/>
     </div>
+    <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
   </section>
   <ModalConfirm 
     :is-open="isDeleteModalOpen"

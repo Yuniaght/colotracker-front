@@ -61,15 +61,19 @@ const options = {
   slidesPerView: 'auto',
   speed: 8000,
   loop: true,
-  loopAdditionalSlides: 3,
-  allowTouchMove: true,
-  grabCursor: true,
   spaceBetween: 16,
-  autoplay: {
-    delay: 1,
-    disableOnInteraction: false,
-    pauseOnMouseEnter: true,
+  allowTouchMove: true, 
+  grabCursor: true, 
+  freeMode: {
+    enabled: true,
+    momentum: false,
   },
+  autoplay: {
+    delay: 0, 
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true, 
+  },
+  
   injectStyles: [
     `.swiper-wrapper { transition-timing-function: linear !important; }`
   ],
@@ -93,7 +97,7 @@ const options = {
       </div>
     </div>
   </section>
-  <SectionSlider v-if="data?.length" class="responsive-padding-y text-center overflow-clip" :x-spacing="0" :options="options">
+  <SectionSlider v-if="data" class="responsive-padding-y text-center overflow-clip" :x-spacing="0" :options="options">
     <template #header>
       <h2 class="text-h2 mb-4">Les dernières réalisations</h2>
       <p class="text-h3 text-emerald-blue mb-4">Regardez les derniers coloriages de nos membres</p>
