@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const { $directus, $readUsers } = useNuxtApp()
 const route = useRoute()
-const userPerPage = 9
+const usersData = ref(null) 
+const fetchingUsers = ref(false)
+const { page, items: usersItems, hasMore, handleLoadMore, resetPagination, pageSize } = useInfiniteScroll(usersData, fetchingUsers, { pageSize: 9 })
+
 
 const { values, defineField } = useForm<{
   search: string,
@@ -46,13 +49,21 @@ const { data: users, pending, error } = await useAsyncData('users-list', () => {
         
       ],
       sort: ['user_name'],
-      limit: userPerPage,
+      limit: pageSize,
+      page: page.value,
       filter: fetchFilters.value,
     })
   )
 },   
 {
-  watch: [fetchFilters]
+  watch: [fetchFilters, page]
+})
+
+syncRefs(users, usersData)
+syncRefs(pending, fetchingUsers)
+
+watch(fetchFilters, () => {
+  resetPagination()
 })
 
 watch([searchedQuery], ([newSearch]) => {
@@ -79,8 +90,9 @@ watch([searchedQuery], ([newSearch]) => {
       Chargement des utilisateurs en cours
     </div>
     <div v-if="users" class="responsive-layout grid gap-6 justify-center grid-cols-[minmax(0,27rem)] md:grid-cols-[repeat(2,minmax(0,27rem))] lg:grid-cols-[repeat(3,minmax(0,27rem))]">
-      <CardUser v-for="user in users" :key="user.id" :item="user" show-button />
+      <CardUser v-for="user in usersItems" :key="user.id" :item="user" show-button />
     </div>
+    <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
   </section>
 </template>
 
