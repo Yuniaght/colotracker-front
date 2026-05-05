@@ -4,10 +4,8 @@ import { computed } from 'vue'
 
 const swiperElement = useTemplateRef('swiperElement')
 
-const {options, pagination = false, navigation = false, xSpacing = 'auto', alwaysVisible = false} = defineProps<{
+const {options, xSpacing = 'auto', alwaysVisible = false} = defineProps<{
   options?: SwiperOptions
-  pagination?: boolean
-  navigation?: boolean
   xSpacing?: number | 'auto'
   mode?: 'normal' | 'expanded'
   alwaysVisible?: boolean
@@ -25,14 +23,10 @@ const spacing = computed(() => {
   }
 })
 
-const {swiperPagination, swiperOverflowVisible, swiperProgressbar} = useTwSwiper()
+const {swiperOverflowVisible, swiperProgressbar} = useTwSwiper()
 
-const isProgressbar = computed(() => options?.pagination && (options.pagination as any).type === 'progressbar')
 
 const swiperBaseOptions: SwiperOptions = {...options,}
-
-const prevBtn = useTemplateRef('prevBtn')
-const nextBtn = useTemplateRef('nextBtn')
 
 function initSwiper() {
   const styles = [...(options?.injectStyles || []), swiperOverflowVisible()]
@@ -41,28 +35,6 @@ function initSwiper() {
     ...swiperBaseOptions,
     injectStyles: styles
   } satisfies SwiperOptions
-
-  if(navigation) {
-    swiperOptions.navigation = {
-      prevEl: prevBtn.value,
-      nextEl: nextBtn.value,
-    }
-  }
-
-  if(pagination) {
-    swiperOptions.injectStyles.push((isProgressbar.value ? swiperProgressbar() : swiperPagination()));
-
-    swiperOptions.pagination = {
-      clickable: true,
-    }
-
-    if(typeof options?.pagination === 'object') {
-      swiperOptions.pagination = {
-        ...swiperOptions.pagination,
-        ...options?.pagination,
-      }
-    }
-  }
 
   Object.assign(swiperElement.value!, swiperOptions);
 }
@@ -96,19 +68,9 @@ onMounted(() => {
         'overflow-hidden': mode === 'normal' && !alwaysVisible,
         'opacity-0': !isLoaded
       }">
-        <swiper-container :class="{'hidden': !isLoaded}" ref="swiperElement" init="false">
+        <swiper-container ref="swiperElement" init="false">
           <slot></slot>
         </swiper-container>
-
-        <template v-if="navigation">
-          <span class="z-10 absolute left-6 top-1/2 -translate-y-1/2 cursor-pointer rounded-full size-8 bg-gold-400 hover:scale-110 transition-all duration-300 flex justify-center items-center" ref="prevBtn" type="button" aria-label="Slide précédente">
-            <i class="icon icon-arrow-left text-black" aria-hidden="true"></i>
-          </span>
-
-          <span class="z-10 absolute right-6 top-1/2 -translate-y-1/2 cursor-pointer rounded-full size-8 bg-gold-400 hover:scale-110 transition-all duration-300 flex justify-center items-center" ref="nextBtn" type="button" aria-label="Slide suivante">
-            <i class="icon icon-arrow-left text-black rotate-180" aria-hidden="true"></i>
-          </span>
-        </template>
 
       </div>
     </div>
