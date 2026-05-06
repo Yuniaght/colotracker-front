@@ -2,7 +2,6 @@
 import {serialize} from 'object-to-formdata'
 import {toTypedSchema} from "@vee-validate/zod";
 import {registrationSchema, type RegistrationFormValues} from '~/components/Form/registrationSchema'
-import * as zod from 'zod'
 
 const registrationStatus = ref<{ type: 'idle' | 'success' | 'error', message?: string }>({ 
   type: 'idle' 
@@ -44,7 +43,7 @@ const submitForm = handleSubmit(async (values) => {
       message: errorMessage 
     }
     if (e.data?.data) {
-       setErrors(e.data.data) 
+       setErrors(e.data.data)
     }
   }
 
