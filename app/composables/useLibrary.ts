@@ -59,14 +59,14 @@ export const useLibrary = () => {
     isDeleteModalOpen.value = true
   }
 
-  async function executeDeletion(onSuccess?: () => void) {
+  async function executeDeletion(collection, onSuccess?: () => void) {
     if (!itemToDelete.value) return
     
     const { $toast } = useNuxtApp()
     isPending.value = true
     try {
-      await $directus.request(deleteItem('library', itemToDelete.value))
-      $toast.success('Livre retiré de votre bibliothèque')
+      await $directus.request(deleteItem(collection, itemToDelete.value))
+      $toast.success('L\'objet a été supprimé de votre compte')
       if (onSuccess) await onSuccess()
     } catch (e) {
       $toast.error("Erreur lors de la suppression")
@@ -83,8 +83,6 @@ export const useLibrary = () => {
       executeCreation(bookToProcess.value)
       isConfirmModalOpen.value = false
       bookToProcess.value = null
-    } else {
-      console.log("test")
     }
   }
 
