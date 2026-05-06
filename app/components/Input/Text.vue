@@ -12,6 +12,7 @@ type TextProps = {
   inputId?: string
   submit_button?: boolean;
   icon?: string
+  max?: number
   rules?: RuleExpression<any>
 }
 
@@ -40,6 +41,7 @@ const {errorMessage, value: inputValue, handleBlur, handleChange} = useField(
           :value="inputValue"
           :placeholder="placeholder"
           :id="inputId"
+          :max="max"
           @input="handleChange"
           @blur="handleBlur">
       <i v-if="icon" class="icon absolute top-1/2 right-3 -translate-y-1/2 pointer-events-none" :class="icon"></i>

@@ -7,9 +7,9 @@ const dropZoneRef = ref<HTMLDivElement>()
 type AcceptProp = string[] | string
 
 const {
-  accept = ['image/jpeg', 'image/png', 'application/pdf'],
+  accept = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
   maxFiles = 1,
-  maxSizeMb = 4,
+  maxSizeMb = 0.5,
   name,
   rules,
 
@@ -114,7 +114,7 @@ function handleFiles(newFiles: File[]) {
       ref="dropZoneRef"
       @click="openFileSelector"
       :class="[
-        'relative w-full h-48 border-2 border-dashed rounded-[20px] transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center',
+        'relative w-full h-fit border-2 border-dashed rounded-[20px] transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center',
         !isOverDropZone ? 'border-emerald-blue bg-dim-white' : 'border-dark-navy bg-light-green shadow-inner scale-[1.01]',
         errorMessage ? 'border-rose-red bg-rose-red/5' : ''
       ]"
@@ -136,7 +136,7 @@ function handleFiles(newFiles: File[]) {
 
       <p class="text-dark-navy font-bold text-lg leading-tight">
         Cliquez pour ajouter une image 
-        <span class="font-normal opacity-70">ou glissez-déposez</span>
+        <span class="font-normal opacity-70 hidden md:block">ou glissez-déposez</span>
       </p>
 
       <div class="mt-2 text-emerald-blue/80 text-sm font-medium">
