@@ -1,10 +1,15 @@
 import { createDirectus, rest, staticToken } from '@directus/sdk';
 
-export const useDirectusAdmin = () => {
-  const config = useRuntimeConfig();
-  const client = createDirectus(config.public.directusUrl)
-    .with(rest())
-    .with(staticToken(config.directusAdminToken));
+const config = useRuntimeConfig();
 
-  return client;
+export const useDirectusAdmin = () => {
+  return createDirectus(config.public.directusUrl)
+    .with(rest())
+    .with(staticToken(config.directusAdminToken));;
 };
+
+export const useDirectusUser = (token: string) => {
+  return createDirectus(config.public.directusUrl)
+    .with(rest())
+    .with(staticToken(token));
+}

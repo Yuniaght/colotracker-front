@@ -43,8 +43,8 @@ const problemUrlContactPartial = zod.object({
 })
 
 const pagePartial = (max_page: number) => zod.object({
-  page_number: zod.coerce.bigint("Le chiffre doit être un entier").positive("Le N° de page doit être possitif").refine((val) => val <= BigInt(max_page), { message: `Le numéro de page ne peut pas dépasser ${max_page}` }),
-  date_finished: zod.coerce.date("Veuillez entrer une date valide"),
+  page_number: zod.coerce.bigint("Le chiffre doit être un entier").positive("Le N° de page doit être possitif").refine((val) => val <= Number(max_page), { message: `Le numéro de page ne peut pas dépasser ${max_page}` }),
+  date_finished: zod.coerce.date("Veuillez entrer une date valide").max(new Date, "La date ne peut pas être dans le futur"),
   detailed_info: zod.string().min(1, "Vous devez décrire votre oeuvre"),
 })
 

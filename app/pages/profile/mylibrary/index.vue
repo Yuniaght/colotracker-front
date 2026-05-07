@@ -79,7 +79,7 @@ syncRefs(books, booksData)
 syncRefs(pending, fetchingBooks)
 
 const confirmDeletionAndRefresh = () => {
-  executeDeletion(() => refresh())
+  executeDeletion('library', () => refresh())
 }
 
 watch(fetchFilters, () => {

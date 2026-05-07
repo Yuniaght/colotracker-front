@@ -77,7 +77,7 @@ const handleInfiniteScroll = () => {
 }
 
 const confirmDeletionAndRefresh = async () => {
-  await executeDeletion(() => {
+  await executeDeletion('library', () => {
     return navigateTo({ name: 'profile-mylibrary' })
   })
 }

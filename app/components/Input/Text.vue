@@ -25,6 +25,16 @@ const {errorMessage, value: inputValue, handleBlur, handleChange} = useField(
     rules,
     {label}
 );
+
+const displayValue = computed(() => {
+  if (type === 'date' && inputValue.value instanceof Date) {
+    return isNaN(inputValue.value.getTime()) 
+      ? '' 
+      : inputValue.value.toISOString().split('T')[0];
+  }
+  return inputValue.value;
+});
+
 </script>
 
 <template>
@@ -38,7 +48,7 @@ const {errorMessage, value: inputValue, handleBlur, handleChange} = useField(
           class="w-full default-input"
           :class="[inputClass, errorMessage ? 'input-error': undefined]"
           :type="type"
-          :value="inputValue"
+          :value="displayValue"
           :placeholder="placeholder"
           :id="inputId"
           :max="max"

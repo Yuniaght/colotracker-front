@@ -30,7 +30,7 @@ const validationSchema = computed(() => {
   return toTypedSchema(addPageSchema(data.value.page_count))
 })
 
-const { values: formValues, handleSubmit, setFieldValue, setErrors } = useForm<AddPageFormValues>({
+const { values: formValues, handleSubmit, setErrors } = useForm<AddPageFormValues>({
   validationSchema: validationSchema.value
 })
 
@@ -63,9 +63,13 @@ const submitForm = handleSubmit(async (values) => {
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">
+    <div class="pb-6">
+      <AppLink :to="{name : 'profile-mylibrary-id', params: {id: id}}">⬅ Retour</AppLink>
+    </div>
     <h1 class="text-h1">Ajouter un coloriage au livre : {{ data!.name }}</h1>
     <form @submit.prevent="submitForm" class="p-10 responsive-layout">
       <FormPage :max_page="data!.page_count" />
+      <AppButton theme="dark-navy" type="submit">Ajouter la page</AppButton>
     </form>
   </section>
 </template>
