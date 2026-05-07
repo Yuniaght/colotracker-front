@@ -6,7 +6,7 @@ const page = computed(() => parseInt((route.params.page as string).split("-")[2]
 const libraryID = computed(() => parseInt((route.params.id as string)))
 
 
-const { data: data, pending, error } = await useAsyncData(`page-${page}-${route.params.id}`, () => {
+const { data: data, error } = await useAsyncData(`page-${page.value}-${route.params.id}`, () => {
   return $directus.request(
     $readItems('completed_pages', {
       fields: [
@@ -101,7 +101,7 @@ const confirmDeletionAndRefresh = async () => {
           <p>{{ data?.detailed_info }}</p>
         </div>
         <div class="p-8 bg-dim-white rounded-xl flex flex-col md:flex-row gap-4">
-          <AppButton theme="dark-navy" class="w-full">Modifier la page</AppButton> 
+          <AppButton theme="dark-navy" class="w-full" :to="{name: 'profile-mylibrary-id-page-edit', params: {id: route.params.id, page: route.params.page}}">Modifier la page</AppButton> 
           <AppButton theme="rose-red" class="w-full" @click="confirmDelete(data!.id)">Supprimer la page</AppButton>
         </div>
       </div>

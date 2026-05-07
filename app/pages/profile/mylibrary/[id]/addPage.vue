@@ -69,6 +69,7 @@ const submitForm = handleSubmit(async (values) => {
     <h1 class="text-h1">Ajouter un coloriage au livre : {{ data!.name }}</h1>
     <form @submit.prevent="submitForm" class="p-10 responsive-layout">
       <FormPage :max_page="data!.page_count" />
+      <AppButton theme="dark-navy" type="submit">Ajouter la page</AppButton>
     </form>
   </section>
 </template>

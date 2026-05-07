@@ -42,6 +42,5 @@ defineProps<{
       <p class="italic">Taille max : 512ko</p>
     </template>
   </InputMultipleFile>
-  <AppButton theme="dark-navy" type="submit">Ajouter la page</AppButton>
 </template>
 <style scoped></style>
