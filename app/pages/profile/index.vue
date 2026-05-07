@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Book } from '~~/shared/types/directus';
-
 interface DirectusFile {
   id: string;
   filename_download: string;
@@ -30,7 +28,6 @@ interface BookActivity {
   };
 }
 
-// The "Union" type that can be either one
 type UserActivity = PageActivity | BookActivity;
 
 const { $directus, $readItems } = useNuxtApp()
