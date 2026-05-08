@@ -74,8 +74,8 @@ const publicLink = [
               <button @click="toggleProfile" class="flex items-center focus:outline-none cursor-pointer pt-1">
                 <div
                   class="w-10 h-10 rounded-full border-2 border-skin-orange overflow-clip hover:border-opacity-70 transition-all">
-                  <nuxt-picture v-if="user.avatar != null" provider="directus"
-                    :src="`${user.avatar.id}/${user.avatar.filename_download}`" :alt="user.avatar.title"
+                  <nuxt-picture v-if="user?.avatar != null" provider="directus"
+                    :src="`${user?.avatar.id}/${user?.avatar.filename_download}`" :alt="user?.avatar.title"
                     class="w-full h-full object-cover" />
                   <nuxt-picture v-else src="/img/defaultavatar.jpg" alt="avatar par défaut"
                     class="w-full h-full object-cover" />

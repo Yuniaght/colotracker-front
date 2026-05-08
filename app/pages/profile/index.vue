@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { triggerFlow } from '@directus/sdk';
 interface DirectusFile {
   id: string;
   filename_download: string;
@@ -30,7 +31,7 @@ interface BookActivity {
 
 type UserActivity = PageActivity | BookActivity;
 
-const { $directus, $readItems } = useNuxtApp()
+const { $directus, $readItems, $toast, $logout } = useNuxtApp()
 const user = useDirectusUser()
 const userSlug = computed(() => user.value.userSlug)
 
@@ -119,6 +120,20 @@ const { data: latestActivity } = await useAsyncData<UserActivity[]>(`${userSlug.
   return combinedActivity.slice(0, 3);
 });
 
+const requestAccountDeletion = async () => {
+  try {
+    await $directus.request(
+      triggerFlow('POST', 'a6a887f3-c6c6-4bf0-9aba-6be7d3b74f4c')
+    )
+
+    $logout({name: 'goodbye'})
+
+  } catch (error: any) {
+    console.log(error)
+    $toast.error(error.message)
+  }
+};
+
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">
@@ -126,15 +141,18 @@ const { data: latestActivity } = await useAsyncData<UserActivity[]>(`${userSlug.
     <div class="grid lg:grid-cols-[415px_minmax(0,1fr)] gap-8">
       <aside class="bg-pure-white p-8 shadow-sm rounded-xl min-w-0 w-full overflow-hidden lg:max-w-[415px]">
         <div class="w-32 h-32 rounded-full pb-1 border-2 mx-auto border-skin-orange overflow-clip">
-          <nuxt-picture v-if="user.avatar != null" provider="directus" :src="`${user.avatar.id}/${user.avatar.filename_download}`" :alt="user.avatar.title" />
+          <nuxt-picture v-if="user?.avatar != null" provider="directus" :src="`${user?.avatar.id}/${user?.avatar.filename_download}`" :alt="user?.avatar.title" />
           <nuxt-picture v-else src="/img/defaultavatar.jpg" alt="avatar par défaut" />
         </div>
         <h2 class="text-h2 text-center pb-1">{{ user.user_name }}</h2>
         <p class="pb-1 text-center truncate" :title="user.email">{{ user.email }}</p>
         <div class="pt-7 text-center">
           <AppButton class="w-full mb-3" theme="emerald-blue" :to="{name: 'profile-mylibrary'}">Ma bibliothèque</AppButton>
+          <AppButton class="w-full mb-3" theme="emerald-blue" :to="{name: 'profile-calendar'}">Mon calendrier</AppButton>
+          <AppButton class="w-full mb-8" theme="skin-orange" @click="console.log('functionhere')">Selecteur de page aléatoire</AppButton>
+          <h3 class="text-h3 pb-2">Gestion du compte</h3>
           <AppButton class="w-full mb-3" theme="rose-red" :to="{name: 'profile-edit'}">Modifier mes informations</AppButton>
-          <nuxt-link to="#" class="block py-2 text-skin-orange hover:text-rose-red transition-colors duration-300">Supprimer mon compte</nuxt-link>
+          <AppButton @click="requestAccountDeletion" class="w-full">Supprimer mon compte</AppButton>
         </div>  
       </aside>
       <div class="p-8 bg-pure-white shadow-sm rounded-xl">

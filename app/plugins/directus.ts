@@ -76,12 +76,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     );
   };
 
-  const logout = async () => {
+  const logout = async (routeToReturnAfter: {} = {name: "index", params: {}}) => {
     try {
       await directus.logout({ mode: "session" })
       user.value = null
-    } catch (e) { }
-    return navigateTo('/')
+    } catch (e) {}
+    return navigateTo(routeToReturnAfter)
   }
 
   return {

@@ -69,7 +69,7 @@ const submitForm = handleSubmit(async (values) => {
         <template #profilePicture>
           <div class="w-32">
             <div class="w-32 h-32 rounded-full pb-1 border-2 mx-auto border-skin-orange overflow-clip">
-              <nuxt-picture v-if="user.avatar != null" provider="directus" :src="`${user.avatar.id}/${user.avatar.filename_download}`" :alt="user.avatar.title" />
+              <nuxt-picture v-if="user?.avatar != null" provider="directus" :src="`${user?.avatar.id}/${user?.avatar.filename_download}`" :alt="user?.avatar.title" />
               <nuxt-picture v-else src="/img/defaultavatar.jpg" alt="avatar par défaut" />
             </div>
             <div v-show="user.avatar && formValues.avatar?.length === 0" class="mt-4 flex items-center gap-2">
