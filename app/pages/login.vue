@@ -31,6 +31,7 @@ const login = async () => {
         router.push('/profile')
     } catch (error) {
         errorMsg.value = error.message || 'An unexpected error occurred'
+        console.log(errorMsg.value)
     }
 }
 </script>

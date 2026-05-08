@@ -5,6 +5,7 @@ export const minFiles = 1
 export const maxFiles = 1
 export const allowedTypes: zod.core.util.MimeTypes[] = ['image/webp', 'image/png', 'image/jpeg', 'image/jpg',]
 export const subjectEnum = zod.enum(["message", "copyright", "offensive_content"])
+export const emptyAsNull = (val: unknown) => (val === '' ? null : val);
 
 const registerPartial = zod.object({
   user_name: zod.string().min(1).max(100),
@@ -48,6 +49,13 @@ const pagePartial = (max_page: number) => zod.object({
   detailed_info: zod.string().min(1, "Vous devez décrire votre oeuvre"),
 })
 
+const editProfilePartial = zod.object({
+  discord_pseudonym: zod.preprocess(emptyAsNull, zod.string().min(1).nullable()),
+  instagram_link: zod.preprocess(emptyAsNull, zod.url().nullable()),
+  password: zod.preprocess(emptyAsNull,zod.string().min(8).max(100).nullable()),
+  confirm_password: zod.preprocess(emptyAsNull,zod.string().nullable()),
+  delete_avatar: zod.preprocess((val) => val === 'true' || val === true, zod.boolean().optional().default(false))
+})
 
 export const zodShared = {
   registerPartial,
@@ -55,4 +63,5 @@ export const zodShared = {
   commonContactPartial,
   problemUrlContactPartial,
   pagePartial,
+  editProfilePartial,
 }

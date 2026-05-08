@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    const { $fetchUser, $directus } = useNuxtApp();
+    const { $fetchUser } = useNuxtApp();
     const user = useDirectusUser();
 
     // Login and register pages are not protected
@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             await $fetchUser();
         }
         if (!user.value) {
-            return navigateTo("/login");
+            return navigateTo("/");
         }
     }
     return;

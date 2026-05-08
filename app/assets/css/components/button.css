@@ -66,6 +66,13 @@
     --hover-color: var(--color-dark-navy);
 }
 
+.btn--skin-orange {
+    --background-color: var(--color-skin-orange);
+    --color: var(--color-dark-navy);
+
+    --hover-background-color: var(--color-dim-white);
+    --hover-color: var(--color-dark-navy);
+}
 
 
 .swiper-button-disabled {

@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
   const _contentType = getRequestHeader(event, 'content-type');
   const contentType = (_contentType || '')?.split(';')[0]?.trim();
   let body: Record<string, any>;
+  
   if (contentType === 'multipart/form-data') {
     const _body = await readMultipartFormData(event);
     body = await parseMultiPartData(_body);

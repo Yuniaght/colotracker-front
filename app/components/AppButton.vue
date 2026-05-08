@@ -2,7 +2,7 @@
 import type {RouteLocationRaw} from "#vue-router";
 
 const {theme, to, size, hover = true} = defineProps<{
-  theme?: 'dark-navy' | 'emerald-blue' | 'rose-red'
+  theme?: 'dark-navy' | 'emerald-blue' | 'rose-red' | 'skin-orange'
   to?: RouteLocationRaw
   size?: 'small' | 'medium'
   hover?: boolean

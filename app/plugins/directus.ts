@@ -35,8 +35,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   
   const sessionCookie = useCookie('directus_session_token');
 
-  const fetchUser = async () => {
-    if (user.value) return user.value
+  const fetchUser = async (forceRefresh = false) => {
+    if (user.value && !forceRefresh) return user.value
     try {
       const me = await directus.request(readMe({
         fields: [
@@ -76,12 +76,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     );
   };
 
-  const logout = async () => {
+  const logout = async (routeToReturnAfter: {} = {name: "index", params: {}}) => {
     try {
       await directus.logout({ mode: "session" })
       user.value = null
-    } catch (e) { }
-    return navigateTo('/')
+    } catch (e) {}
+    return navigateTo(routeToReturnAfter)
   }
 
   return {
