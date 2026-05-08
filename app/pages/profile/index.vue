@@ -32,6 +32,7 @@ interface BookActivity {
 type UserActivity = PageActivity | BookActivity;
 
 const { $directus, $readItems, $toast, $logout } = useNuxtApp()
+const { isModalOpen, loading, suggestion, fetchRandomPage } = useRandomPage()
 const user = useDirectusUser()
 const userSlug = computed(() => user.value.userSlug)
 
@@ -149,7 +150,7 @@ const requestAccountDeletion = async () => {
         <div class="pt-7 text-center">
           <AppButton class="w-full mb-3" theme="emerald-blue" :to="{name: 'profile-mylibrary'}">Ma bibliothèque</AppButton>
           <AppButton class="w-full mb-3" theme="emerald-blue" :to="{name: 'profile-calendar'}">Mon calendrier</AppButton>
-          <AppButton class="w-full mb-8" theme="skin-orange" @click="console.log('functionhere')">Selecteur de page aléatoire</AppButton>
+          <AppButton class="w-full mb-8" theme="skin-orange" @click="fetchRandomPage">Selecteur de page aléatoire</AppButton>
           <h3 class="text-h3 pb-2">Gestion du compte</h3>
           <AppButton class="w-full mb-3" theme="rose-red" :to="{name: 'profile-edit'}">Modifier mes informations</AppButton>
           <AppButton @click="requestAccountDeletion" class="w-full">Supprimer mon compte</AppButton>
@@ -209,6 +210,10 @@ const requestAccountDeletion = async () => {
         </div>
       </div>
     </div>
-    
   </section>
+  <ModalRandomPage 
+  :is-open="isModalOpen" 
+  :suggestion="suggestion" 
+  @close="isModalOpen = false" 
+/>
 </template>
