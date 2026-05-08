@@ -31,6 +31,15 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+        'swiper/element/bundle',
+        '@directus/sdk',
+        'vue3-toastify',
+      ]
+    }
   },
 
   css: [

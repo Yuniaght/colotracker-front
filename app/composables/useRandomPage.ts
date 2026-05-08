@@ -39,7 +39,10 @@ export const useRandomPage = () => {
           front_cover: entry?.book?.front_cover,
           page: undone[Math.floor(Math.random() * undone.length)]
         }
-        isModalOpen.value = true
+        
+        if (!isModalOpen.value) {
+          isModalOpen.value = true
+        }
       }
     } finally {
       loading.value = false
