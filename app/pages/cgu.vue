@@ -2,7 +2,7 @@
 import { readSingleton } from '@directus/sdk';
 const { $directus } = useNuxtApp()
 
-const {data} = await useAsyncData('cgu', () => {
+const {data, error} = await useAsyncData('cgu', () => {
   return $directus.request(
     readSingleton('cgu', {
       fields: [
@@ -14,6 +14,15 @@ const {data} = await useAsyncData('cgu', () => {
     })
   )
 })
+
+if (error.value || !data.value) {
+  throw createError({
+    statusCode: 500,
+    statusMessage: 'Impossible de charger les conditions générales.',
+    fatal: true
+  })
+}
+
 </script>
 <template>
   <section v-html="data?.content" class="responsive-padding-t responsive-padding-x responsive-layout directus-content" />

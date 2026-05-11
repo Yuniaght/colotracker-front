@@ -6,7 +6,7 @@ const libraryData = ref(null)
 const fetchingBooks = ref(false)
 const { page, items: libraryItems, hasMore, handleLoadMore, resetPagination, pageSize } = useInfiniteScroll(libraryData, fetchingBooks, { pageSize: 10 })
 
-const { data: users, pending: fetchingUser, error: fetchUserError } = await useAsyncData(`user_${userSlug.value}`, () => {
+const { data: users, error: fetchUserError } = await useAsyncData(`user_${userSlug.value}`, () => {
   return $directus.request(
     $readUsers({
       fields: [
@@ -35,7 +35,17 @@ const { data: users, pending: fetchingUser, error: fetchUserError } = await useA
   )
 })
 
-const { values, defineField } = useForm<{
+if (fetchUserError.value || !users.value || users.value.length === 0) {
+  throw createError({ 
+    statusCode: 404, 
+    statusMessage: "Ce membre n'existe pas",
+    fatal: true 
+  })
+}
+
+const user = users.value[0]
+
+const { defineField } = useForm<{
   search: string,
 }>({
   initialValues: {
@@ -60,13 +70,6 @@ const fetchFilters = computed(() => {
   }
   return queryFilter
 })
-
-
-if (!users.value || users.value.length === 0) {
-  throw createError({ statusCode: 404, statusMessage: 'Utilisateur introuvable' })
-}
-
-const user = users.value[0]
 
 const { data: library, pending, error: libraryError } = await useLazyAsyncData(`library_${userSlug.value}`, () => {
   return $directus.request(
@@ -115,7 +118,6 @@ const { data: library, pending, error: libraryError } = await useLazyAsyncData(`
 syncRefs(library, libraryData)
 syncRefs(pending, fetchingBooks)
 
-
 watch(fetchFilters, () => {
   resetPagination()
 })
@@ -150,7 +152,19 @@ watch([searchedQuery], ([newSearch]) => {
             class="text-sm shadow-sm w-full px-6 py-4 border border-dark-navy/50 rounded-4xl" />
         </div>
       </form>
-        <div class="grid lg:grid-cols-2 gap-2">
+        <div v-if="pending && libraryItems.length === 0" class="py-10 text-center">
+          Chargement des livres...
+        </div>
+
+        <div v-else-if="libraryError" class="p-6 bg-rose-50 text-rose-red rounded-xl">
+          Impossible de charger la bibliothèque de ce membre pour le moment.
+        </div>
+
+        <div v-else-if="libraryItems.length === 0" class="py-20 text-center italic">
+          {{ debouncedSearch ? 'Aucun livre ne correspond à votre recherche.' : 'Ce membre n\'a pas encore de livres dans sa bibliothèque.' }}
+        </div>
+
+        <div v-else class="grid lg:grid-cols-2 gap-2" :class="{ 'opacity-50 pointer-events-none': pending }">
           <CardLibraryBook v-for="item in libraryItems" :key="item.id" :item="item" :user-slug="user.slug" target="libraries-slug-id" />
         </div>
         <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 

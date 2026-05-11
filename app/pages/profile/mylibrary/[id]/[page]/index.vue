@@ -66,12 +66,24 @@ const { data: data, error } = await useAsyncData(`page-${page.value}-${route.par
     return data[0]
   }
 })
+
+if (error.value) {
+  throw createError({ statusCode: 500, statusMessage: 'Erreur de connexion au serveur', fatal: true })
+}
+
+if (!data.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Cette page n’existe pas dans votre collection', fatal: true })
+}
+
 const book = computed(() => data.value?.library_from?.book)
 const confirmDeletionAndRefresh = async () => {
   await executeDeletion('completed_pages', () => {
     return navigateTo({ name: 'profile-mylibrary-id' , params: {id: route.params.id }})
   })
 }
+
+
+
 </script>
 
 <template>

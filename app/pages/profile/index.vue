@@ -36,7 +36,7 @@ const { isModalOpen, loading, suggestion, fetchRandomPage } = useRandomPage()
 const user = useDirectusUser()
 const userSlug = computed(() => user.value.userSlug)
 
-const { data: userStats } = await useAsyncData(`${userSlug.value}-library-stats`, async () => {
+const { data: userStats, error: statsError } = await useAsyncData(`${userSlug.value}-library-stats`, async () => {
   let completedPagesCount = 0
   let finishedBookCount = 0
   const libraryItems = await $directus.request(
@@ -66,7 +66,7 @@ const { data: userStats } = await useAsyncData(`${userSlug.value}-library-stats`
   }
 })
 
-const { data: latestActivity } = await useAsyncData<UserActivity[]>(`${userSlug.value}-latest`, async () => {
+const { data: latestActivity, error: activityError } = await useAsyncData<UserActivity[]>(`${userSlug.value}-latest`, async () => {
   const [lastPages, lastBooks] = await Promise.all([
     $directus.request(
       $readItems("completed_pages", {
@@ -130,15 +130,19 @@ const requestAccountDeletion = async () => {
     $logout({name: 'goodbye'})
 
   } catch (error: any) {
-    console.log(error)
     $toast.error(error.message)
   }
 };
+
+const hasError = computed(() => statsError.value || activityError.value)
 
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">
     <h1 class="text-h1 pb-8">Mon profil & Dashboard</h1>
+    <div v-if="hasError" class="mb-6 p-4 bg-skin-orange text-rose-red rounded-xl border border-rose-red/50">
+      <p>Certaines informations ne sont pas à jour suite à un problème de connexion avec le serveur.</p>
+    </div>
     <div class="grid lg:grid-cols-[415px_minmax(0,1fr)] gap-8">
       <aside class="bg-pure-white p-8 shadow-sm rounded-xl min-w-0 w-full overflow-hidden lg:max-w-[415px]">
         <div class="w-32 h-32 rounded-full pb-1 border-2 mx-auto border-skin-orange overflow-clip">
@@ -158,7 +162,7 @@ const requestAccountDeletion = async () => {
       </aside>
       <div class="p-8 bg-pure-white shadow-sm rounded-xl">
         <h2 class="text-h2 w-full border-b-2 pb-4 mb-4 border-dark-navy/20">Mes statistiques</h2>
-        <div class="grid md:grid-cols-3 gap-4 pb-4">
+        <div class="grid md:grid-cols-3 gap-4 pb-4" v-if="userStats">
           <div class="bg-dim-white rounded-md p-4 md:inline-block">
             <p class="text-h1 font-bold text-emerald-blue">{{ userStats?.totalBooks }}</p>
             <p>Livre<span v-if="userStats?.totalBooks! > 1">s</span> dans ma bibliothèque</p>
@@ -172,7 +176,13 @@ const requestAccountDeletion = async () => {
             <p>Livre<span v-if="userStats?.finishedBookCount! > 1">s</span> terminé<span v-if="userStats?.finishedBookCount > 1">s</span></p>
           </div>
         </div>
+        <div v-else-if="statsError" class="p-4 bg-dim-white rounded-md text-sm italic">
+          Statistiques indisponibles.
+        </div>
         <h2 class="text-h2 pb-4">Activités récentes</h2>
+        <div v-if="activityError" class="p-4 bg-dim-white rounded-md text-sm italic">
+          Impossible de charger l'historique récent.
+        </div>
         <div v-if="latestActivity?.length === 0">
           <p>Aucune activité n'a été enregistré pour ce compte</p>
         </div>

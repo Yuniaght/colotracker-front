@@ -2,7 +2,7 @@
 import { readSingleton } from '@directus/sdk';
 const { $directus } = useNuxtApp()
 
-const {data} = await useAsyncData('about', () => {
+const {data, error} = await useAsyncData('about', () => {
   return $directus.request(
     readSingleton('about', {
       fields: [
@@ -58,6 +58,13 @@ const {data} = await useAsyncData('about', () => {
 
 const stepColors= ["light-green","skin-orange","rose-red"]
 
+if (error.value || !data.value) {
+  throw createError({
+    statusCode: 500, 
+    statusMessage: 'Impossible de charger les conditions générales.',
+    fatal: true 
+  })
+}
 </script>
 <template>
   <section class="text-center responsive-padding-y responsive-padding-x">

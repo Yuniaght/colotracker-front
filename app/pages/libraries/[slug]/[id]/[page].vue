@@ -4,6 +4,9 @@ const route = useRoute()
 const page = computed(() => parseInt((route.params.page as string).split("-")[2] || '0'))
 const libraryID = computed(() => parseInt((route.params.id as string)))
 
+if (isNaN(page.value) || libraryID.value <= 0) {
+  throw createError({ statusCode: 404, statusMessage: 'Page non trouvée', fatal: true })
+}
 
 const { data: data, pending, error } = await useAsyncData(`page-${page}-${route.params.id}`, () => {
   return $directus.request(
@@ -65,6 +68,14 @@ const { data: data, pending, error } = await useAsyncData(`page-${page}-${route.
   }
 })
 
+if (error.value) {
+  throw createError({ statusCode: 500, statusMessage: 'Erreur serveur', fatal: true })
+}
+
+if (!data.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page de coloriage introuvable', fatal: true })
+}
+
 const user = computed(() => data.value?.library_from?.user)
 const book = computed(() => data.value?.library_from?.book)
 </script>
@@ -109,7 +120,7 @@ const book = computed(() => data.value?.library_from?.book)
           <p class="pt-4 text-sm text-dark-navy/50">Date de réalisation</p>
           <nuxt-time :datetime="data?.date_finished" locale="fr-FR" year="numeric" month="long" day="numeric"/>
           <p class="pt-4 text-sm text-dark-navy/50">Info détaillées</p>
-          <p>{{ data?.detailed_info }}</p>
+          <p class="whitespace-pre-line">{{ data?.detailed_info }}</p>
         </div>
       </div>
     </div>

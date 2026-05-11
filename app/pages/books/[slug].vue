@@ -5,7 +5,7 @@ const { $directus, $readItems } = useNuxtApp()
 const route = useRoute()
 const slug = route.params.slug as string
 
-const { data: book, pending, error } = await useAsyncData('book-list', () => {
+const { data: book, error } = await useAsyncData('book-list', () => {
   return $directus.request(
     $readItems('books', {
       filter: {
@@ -51,6 +51,14 @@ const { data: book, pending, error } = await useAsyncData('book-list', () => {
 }
 )
 
+if (error.value) {
+  throw createError({ statusCode: 500, statusMessage: 'Erreur serveur', fatal: true })
+}
+
+if (!book.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Livre introuvable', fatal: true })
+}
+
 const categories = computed(() => {
   if (!book.value?.category_list) return []
 
@@ -70,15 +78,7 @@ const userConnected = computed(() => !!user.value)
         ⬅ Retour aux livres
       </AppLink>
     </div>
-
-    <div v-if="pending">Chargement du livre...</div>
-
-    <div v-else-if="error || !book">
-      <h1 class="text-red-500 text-2xl">Livre introuvable</h1>
-      <p>Il semble que ce livre n'existe pas ou a été déplacé.</p>
-    </div>
-
-    <div v-else
+    <div
       class="bg-pure-white shadow-sm rounded-3xl px-4 lg:px-10 py-10 lg:grid-cols-[max-content_1fr] lg:grid gap-10">
       <div class="max-w-105 h-fit mx-auto lg:mx-0 pb-10 lg:pb-0">
         <nuxt-picture provider="directus" :src="`${book.front_cover.id}/${book.front_cover.filename_download}`"
@@ -96,12 +96,29 @@ const userConnected = computed(() => !!user.value)
           {{ book.author.full_name }}</AppLink>
         <div class="p-6">
           <p class="pb-2 border-b-2 border-dark-navy/15">Informations</p>
-          <p class="flex justify-between"><span>Nombre de pages :</span><span>{{ book.page_count }}</span></p>
-          <p class="flex justify-between"><span>Date de sortie :</span> <nuxt-time :datetime="book.release_date"
-              year="numeric" month="long" day="numeric" /></p>
-          <p class="flex justify-between"><span>Lien d'achat :</span>
-            <AppLink :to="book.store_link" class="text-emerald-blue">Acheter ce livre</AppLink>
-          </p>
+          <ul class="list-none p-0">
+            <li class="flex justify-between pb-2">
+              <span>Nombre de pages :</span>
+              <span>{{ book.page_count }}</span>
+            </li>
+            <li class="flex justify-between pb-2">
+              <span>Date de sortie :</span>
+              <nuxt-time 
+                :datetime="book.release_date"
+                year="numeric" 
+                month="long" 
+                day="numeric" 
+              />
+            </li>
+            <li v-if="book.store_link" class="flex justify-between pb-2">
+              <span>Lien d'achat :</span>
+              <AppLink 
+                :to="book.store_link" 
+                class="text-emerald-blue" >
+                Acheter ce livre
+              </AppLink>
+            </li>
+          </ul>
         </div>
         <div>
           <p class="pb-2">Catégories</p>

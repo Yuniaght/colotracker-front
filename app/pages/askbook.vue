@@ -4,15 +4,11 @@ import {toTypedSchema} from "@vee-validate/zod";
 import {askABookSchema, type askABookFormValues} from '~/components/Form/askBookSchema'
 
 const { $toast } = useNuxtApp()
-
-
 const validationSchema =  toTypedSchema(askABookSchema)
-
 const askABookStatus = ref<{ type: 'idle' | 'success' | 'error', message?: string }>({ 
   type: 'idle' 
 })
-
-const { values: formValues, handleSubmit, setFieldValue, resetForm, setErrors } = useForm<askABookFormValues>({
+const { handleSubmit, resetForm, setErrors } = useForm<askABookFormValues>({
   validationSchema
 })
 
@@ -35,7 +31,6 @@ const submitForm = handleSubmit(async (values) => {
     }
 
     $toast.success(askABookStatus.value.message)
-
     resetForm()
 
   } catch (e: any) {

@@ -41,6 +41,13 @@ const publicLink = [
   { path: "/libraries", name: "Trackers" },
   { path: "/about", name: 'A propos' }
 ]
+
+const directusAccessAuth = computed (() => {
+  if (user.value.role === config.public.superAdminRoleId) return true
+  if (user.value.role === config.public.adminRoleId) return true
+  if (user.value.role === config.public.moderatorRoleId) return true
+  return false
+})
 </script>
 
 <template>
@@ -88,7 +95,7 @@ const publicLink = [
                   Mon profil
                 </AppLink>
 
-                <AppLink :to="config.public.directusUrl + '/admin/content'" v-if="user.role === config.public.superAdminRoleId || user.role === config.public.adminRoleId" class="w-full text-center py-2 hover:bg-gray-50" @click="toggleProfile">
+                <AppLink :to="config.public.directusUrl + '/admin/content'" v-if="directusAccessAuth" class="w-full text-center py-2 hover:bg-gray-50" @click="toggleProfile">
                   Administration
                 </AppLink>
                 <button @click="$logout(); toggleProfile"
