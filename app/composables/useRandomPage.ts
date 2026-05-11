@@ -20,7 +20,7 @@ export const useRandomPage = () => {
             { completed_pages: ['page_number'] } 
           ],
           filter: { user: { _eq: user.value.id } }
-        })
+        }),
       )
 
       const available = response.filter((e: any) => e.completed_pages.length < e.book.page_count)

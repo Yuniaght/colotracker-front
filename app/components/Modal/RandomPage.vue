@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   isOpen: boolean
-  loading: boolean // Added loading prop
+  loading: boolean
   suggestion: {
     title: string
     page: number
@@ -28,7 +28,6 @@ const emit = defineEmits(['close', 'reroll'])
       <Transition name="modal-bounce" appear>
         <div v-if="isOpen" class="relative bg-white w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl overflow-hidden border border-dark-navy/5">
           
-          <!-- Wrapper to handle reroll transition and loading state -->
           <div 
             v-if="suggestion" 
             class="flex flex-col items-center text-center transition-opacity duration-300"
@@ -36,9 +35,8 @@ const emit = defineEmits(['close', 'reroll'])
           >
             <h2 class="text-h2 pb-4 anim-delay-1">🎲 Surprise !</h2>
 
-            <!-- Key-changing the ID or Title here forces the animation to re-run on reroll -->
             <div :key="suggestion.title" class="flex flex-col items-center w-full">
-              <div v-if="suggestion.front_cover" class="cover-animation w-40 h-52 mb-6 rounded-lg shadow-lg overflow-hidden border-2 border-dark-navy/10">
+              <div v-if="suggestion.front_cover" class="cover-animation w-40 h-40 mb-6 rounded-lg shadow-lg overflow-hidden border-2 border-dark-navy/10">
                 <nuxt-picture 
                   provider="directus" 
                   :src="`${suggestion.front_cover.id}/${suggestion.front_cover.filename_download}`" 
