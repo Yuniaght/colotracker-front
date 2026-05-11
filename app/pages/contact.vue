@@ -34,7 +34,7 @@ const validationSchema = computed(() => {
   )
 })
 
-const { values: formValues, handleSubmit, setFieldValue, resetForm } = useForm<FormValues>({
+const { values: formValues, handleSubmit, resetForm } = useForm<FormValues>({
   initialValues: { type: route.query.type as FormValues['type'] || DEFAULT },
   validationSchema,
 })

@@ -10,7 +10,12 @@ const libraryId = parseInt(id.split('-')[0] || '0') as number
 const page = route.params.page as string
 const pageNumber = parseInt(page.split('-')[2] || '0')
 
-const { data } = await useAsyncData(`editpage-${id}-${page}`, () => {
+if (isNaN(libraryId) || isNaN(pageNumber)) {
+  throw createError({ statusCode: 404, statusMessage: 'Paramètres invalides', fatal: true })
+}
+
+const [{ data }, { data: pageInfo, error: pageError }] = await Promise.all([
+  useAsyncData(`editpage-${id}-${page}`, () => {
   return $directus.request(
     $readItem('library', libraryId, {
       fields: [ { book: [ "page_count"] } ],
@@ -25,9 +30,8 @@ const { data } = await useAsyncData(`editpage-${id}-${page}`, () => {
       page_count: data.book?.page_count as number
     }
   }
-})
-
-const { data: pageInfo, error } = await useAsyncData(`pageinfo-${page}-${route.params.id}`, () => {
+}),
+useAsyncData(`pageinfo-${page}-${route.params.id}`, () => {
   return $directus.request(
     $readItems('completed_pages', {
       fields: [ "id", "page_number", "date_finished", "detailed_info",
@@ -47,13 +51,17 @@ const { data: pageInfo, error } = await useAsyncData(`pageinfo-${page}-${route.p
     return data[0]
   }
 })
+])
+
+if (pageError.value) throw createError({ statusCode: 500, statusMessage: 'Erreur serveur', fatal: true })
+if (!pageInfo.value || !data.value) throw createError({ statusCode: 404, statusMessage: 'Page ou livre introuvable', fatal: true })
 
 const validationSchema = computed(() => {
   if (!data.value) return undefined
   return toTypedSchema(editPageSchema(data.value.page_count))
 })
 
-const { values: formValues, handleSubmit, setErrors } = useForm<EditPageFormValues>({
+const { handleSubmit, setErrors } = useForm<EditPageFormValues>({
   initialValues: {
     page_number: pageInfo.value.page_number,
     date_finished: pageInfo.value.date_finished,

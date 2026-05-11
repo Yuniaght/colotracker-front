@@ -8,7 +8,7 @@ const route = useRoute()
 const id = route.params.id as string
 const libraryId = parseInt(id.split('-')[0] || '0') as number
 
-const { data: data } = await useAsyncData(`addbook-${id}`, () => {
+const { data: data, error} = await useAsyncData(`addbook-${id}`, () => {
   return $directus.request(
     $readItem('library', libraryId, {
       fields: [ { book: [ "name","page_count"] } ],
@@ -24,6 +24,9 @@ const { data: data } = await useAsyncData(`addbook-${id}`, () => {
     }
   }
 })
+
+if (error.value) throw createError({ statusCode: 500, statusMessage: 'Erreur serveur', fatal: true })
+if (!data.value) throw createError({ statusCode: 404, statusMessage: 'Livre introuvable', fatal: true })
 
 const validationSchema = computed(() => {
   if (!data.value) return undefined

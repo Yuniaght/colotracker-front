@@ -5,7 +5,11 @@ const route = useRoute()
 const id = route.params.id as string
 const libraryId = parseInt(id.split('-')[0] || '0') as number
 
-const { data: data } = await useAsyncData(`book-${id}`, () => {
+if (isNaN(libraryId)) {
+  throw createError({ statusCode: 404, statusMessage: 'Format de livre invalide' })
+}
+
+const { data: data, error } = await useAsyncData(`book-${id}`, () => {
   return $directus.request(
     $readItem('library', libraryId, {
       fields: [
@@ -51,13 +55,23 @@ const { data: data } = await useAsyncData(`book-${id}`, () => {
   )
 })
 
-if (!data.value || data.value.length === 0) {
-  throw createError({ statusCode: 404, statusMessage: 'Livre introuvable' })
+if (error.value) {
+  throw createError({ statusCode: 500, statusMessage: 'Erreur serveur', fatal: true })
+}
+
+if (!data.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Livre introuvable', fatal: true })
 }
 
 const completed_pages = computed(() => {
   if (!data.value?.completed_pages) return []
   return data.value.completed_pages
+})
+
+const completedPagesMap = computed(() => {
+  const map = new Map()
+  completed_pages.value.forEach(p => map.set(p.page_number, p))
+  return map
 })
 
 const visibleCount = ref(100)
@@ -68,9 +82,7 @@ const showLimit = computed(() => {
 
 const book = computed(() => { return data.value?.book })
 
-const getCompletedPage = (pageNumber: number) => {
-  return completed_pages.value.find((p: any) => p.page_number === pageNumber)
-}
+const getCompletedPage = (pageNumber: number) => completedPagesMap.value.get(pageNumber)
 
 const handleInfiniteScroll = () => {
   visibleCount.value += 100
@@ -103,9 +115,9 @@ const confirmDeletionAndRefresh = async () => {
           <p class="text-h2 pb-4">{{ book?.author.full_name }}</p>
           <div>
             <p>{{ completed_pages.length }} / {{ book?.page_count }} Coloriages terminé</p>
-            <p class="flex justify-between"><span>Avancement</span> <span>{{ calculateProgress(completed_pages.length, book?.page_count) }}</span></p>
+            <p class="flex justify-between"><span>Avancement</span> <span>{{ calculateProgress(completed_pages.length, book?.page_count ?? 1) }}</span></p>
             <div class="w-full bg-dark-navy/20 rounded-full h-2">
-              <div class="h-2 bg-linear-90 from-rose-red to-skin-orange rounded-full" :style="'width:' + calculateProgress(completed_pages.length, book?.page_count)" />
+              <div class="h-2 bg-linear-90 from-rose-red to-skin-orange rounded-full" :style="'width:' + calculateProgress(completed_pages.length, book?.page_count ?? 1)" />
             </div>
             <div class="pt-4">
               <AppButton class="mb-4 w-full" :to="{name: 'profile-mylibrary-id-addPage', params:{ id: id}}" theme="emerald-blue">Ajouter un coloriage</AppButton>

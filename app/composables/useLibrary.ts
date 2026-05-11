@@ -70,7 +70,6 @@ export const useLibrary = () => {
       if (onSuccess) await onSuccess()
     } catch (e) {
       $toast.error("Erreur lors de la suppression")
-      console.error(e)
     } finally {
       isPending.value = false
       isDeleteModalOpen.value = false

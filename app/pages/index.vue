@@ -3,32 +3,14 @@ import type { SwiperOptions } from 'swiper/types'
 import { aggregate } from '@directus/sdk'
 const { $directus, $readItems } = useNuxtApp()
 
-const {data, error} = await useAsyncData('latest-drawings', () => {
+const {data } = await useAsyncData('latest-drawings', () => {
   return $directus.request(
     $readItems('completed_pages', {
-      fields: [
-        "id",
-        "page_number",
-        { 
-          image: [
-            "id",
-            "filename_download",
-            "title"
-          ],
-          library_from: [
-            "id",
-            {
-              user: [
-                "slug",
-                "user_name"
-              ],
-              book: [
-                "slug",
-                "name"
-              ]
-            }
-          ]
-        }
+      fields: ["id","page_number",
+        { image: ["id", "filename_download", "title" ],
+          library_from: [ "id", 
+          { user: [ "slug", "user_name" ],
+            book: [ "slug", "name" ] } ] }
       ],
       limit: 12,
       sort: '-date_finished'

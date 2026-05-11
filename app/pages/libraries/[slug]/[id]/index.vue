@@ -5,7 +5,11 @@ const id = route.params.id as string
 const slug = route.params.slug as string
 const libraryId = parseInt(id.split('-')[0] || '0') as number
 
-const { data: data } = await useAsyncData(`book-${id}`, () => {
+if (isNaN(libraryId) || libraryId <= 0) {
+  throw createError({ statusCode: 404, statusMessage: 'Format de lien invalide', fatal: true })
+}
+
+const { data: data, error } = await useAsyncData(`book-${id}`, () => {
   return $directus.request(
     $readItem('library', libraryId, {
       fields: [
@@ -51,26 +55,33 @@ const { data: data } = await useAsyncData(`book-${id}`, () => {
   )
 })
 
-if (!data.value || data.value.length === 0) {
-  throw createError({ statusCode: 404, statusMessage: 'Livre introuvable' })
+if (error.value) {
+  throw createError({ statusCode: 500, statusMessage: 'Erreur serveur', fatal: true })
 }
 
+if (!data.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Ce livre n’est pas dans la bibliothèque de ce membre', fatal: true })
+}
+
+const book = computed(() => { return data.value?.book })
 const completed_pages = computed(() => {
   if (!data.value?.completed_pages) return []
   return data.value.completed_pages
 })
+
+const completedPagesMap = computed(() => {
+  const map = new Map()
+  completed_pages.value.forEach(p => map.set(p.page_number, p))
+  return map
+})
+
+const getCompletedPage = (pageNumber: number) => completedPagesMap.value.get(pageNumber)
 
 const visibleCount = ref(100)
 const showLimit = computed(() => {
   const total = book.value?.page_count || 0
   return Math.min(visibleCount.value, total)
 })
-
-const book = computed(() => { return data.value?.book })
-
-const getCompletedPage = (pageNumber: number) => {
-  return completed_pages.value.find((p: any) => p.page_number === pageNumber)
-}
 
 const handleInfiniteScroll = () => {
   visibleCount.value += 100

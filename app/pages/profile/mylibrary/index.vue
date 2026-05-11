@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const { isDeleteModalOpen, confirmDelete, executeDeletion } = useLibrary()
-const { $directus, $readItems } = useNuxtApp()
+const { $directus, $readItems, $toast } = useNuxtApp()
 const user = useDirectusUser()
 const route = useRoute()
 const booksData = ref(null) 
 const fetchingBooks = ref(false)
 const { page, items: booksItems, hasMore, handleLoadMore, resetPagination, pageSize } = useInfiniteScroll(booksData, fetchingBooks, { pageSize: 12 })
-const { values, defineField } = useForm<{
+const { defineField } = useForm<{
   search: string,
 }>({
   initialValues: {
@@ -31,7 +31,7 @@ const fetchFilters = computed(() => {
   return queryFilter
 })
 
-const { data: books, pending, refresh } = await useAsyncData(`library_${user.value!.slug}`, () => {
+const { data: books, pending, refresh, error } = await useAsyncData(`library_${user.value!.slug}`, () => {
   return $directus.request(
     $readItems('library', {
       fields: [
@@ -94,6 +94,20 @@ watch([searchedQuery], ([newSearch]) => {
     }
   }, { replace: true })
 })
+
+if (error.value && !debouncedSearch.value) {
+  throw createError({
+    statusCode: 500,
+    statusMessage: "Impossible d'accéder à votre bibliothèque.",
+    fatal: true
+  })
+}
+
+watch(error, (newErr) => {
+  if (newErr && debouncedSearch.value) {
+    $toast.error("Erreur lors de la recherche...")
+  }
+})
 </script>
 <template>
   <section class="responsive-padding-y responsive-padding-x">
@@ -107,7 +121,19 @@ watch([searchedQuery], ([newSearch]) => {
           class="text-sm shadow-sm w-full px-6 py-4 border border-dark-navy/50 rounded-4xl" />
       </div>
     </form>
-    <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div v-if="pending && booksItems.length === 0" class="text-center py-20">
+      Recherche en cours...
+    </div>
+    <div v-else-if="error" class="text-center py-10 bg-rose-50 rounded-xl">
+      <p>Une erreur est survenue lors de la récupération des livres.</p>
+      <AppButton @click="refresh" class="mt-2">Réessayer</AppButton>
+    </div>
+    <div v-else-if="booksItems.length === 0" class="text-center py-20">
+      <p v-if="debouncedSearch">Aucun livre ne correspond à "{{ debouncedSearch }}"</p>
+      <p v-else>Votre bibliothèque est vide. <AppLink to="/catalogue">Ajouter un livre</AppLink></p>
+    </div>
+    <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 transition-opacity"
+        :class="{ 'opacity-50 pointer-events-none': pending }">
       <CardLibraryBook v-for="item in booksItems" :key="item.id" :item="item" target="profile-mylibrary-id" delete-button @remove-from-library="confirmDelete"/>
     </div>
     <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
