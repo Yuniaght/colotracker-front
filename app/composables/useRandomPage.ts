@@ -20,7 +20,7 @@ export const useRandomPage = () => {
             { completed_pages: ['page_number'] } 
           ],
           filter: { user: { _eq: user.value.id } }
-        })
+        }),
       )
 
       const available = response.filter((e: any) => e.completed_pages.length < e.book.page_count)
@@ -39,7 +39,10 @@ export const useRandomPage = () => {
           front_cover: entry?.book?.front_cover,
           page: undone[Math.floor(Math.random() * undone.length)]
         }
-        isModalOpen.value = true
+        
+        if (!isModalOpen.value) {
+          isModalOpen.value = true
+        }
       }
     } finally {
       loading.value = false

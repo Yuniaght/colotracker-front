@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   isOpen: boolean
+  loading: boolean
   suggestion: {
     title: string
     page: number
@@ -12,7 +13,7 @@ const props = defineProps<{
   } | null
 }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'reroll'])
 </script>
 
 <template>
@@ -27,39 +28,61 @@ const emit = defineEmits(['close'])
       <Transition name="modal-bounce" appear>
         <div v-if="isOpen" class="relative bg-white w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl overflow-hidden border border-dark-navy/5">
           
-          <div v-if="suggestion" class="flex flex-col items-center text-center">
+          <div 
+            v-if="suggestion" 
+            class="flex flex-col items-center text-center transition-opacity duration-300"
+            :class="{ 'opacity-40 pointer-events-none': loading }"
+          >
             <h2 class="text-h2 pb-4 anim-delay-1">🎲 Surprise !</h2>
 
-            <div v-if="suggestion.front_cover" class="cover-animation w-40 h-52 mb-6 rounded-lg shadow-lg overflow-hidden border-2 border-dark-navy/10">
-              <nuxt-picture 
-                provider="directus" 
-                :src="`${suggestion.front_cover.id}/${suggestion.front_cover.filename_download}`" 
-                :alt="suggestion.front_cover.title || 'Couverture du livre'"
-                class="w-full h-full object-cover"
-              />
-            </div>
+            <div :key="suggestion.title" class="flex flex-col items-center w-full">
+              <div v-if="suggestion.front_cover" class="cover-animation w-40 h-40 mb-6 rounded-lg shadow-lg overflow-hidden border-2 border-dark-navy/10">
+                <nuxt-picture 
+                  provider="directus" 
+                  :src="`${suggestion.front_cover.id}/${suggestion.front_cover.filename_download}`" 
+                  :alt="suggestion.front_cover.title || 'Couverture du livre'"
+                  class="w-full h-full object-cover"
+                />
+              </div>
 
-            <div class="anim-delay-2">
-              <p class="text-sm uppercase tracking-widest text-dark-navy/60 font-bold mb-1">
-                Votre défi du jour
-              </p>
-              <h3 class="text-h3 font-bold text-dark-navy mb-4">
-                {{ suggestion.title }}
-              </h3>
-            </div>
+              <div class="anim-delay-2">
+                <p class="text-sm uppercase tracking-widest text-dark-navy/60 font-bold mb-1">
+                  Votre défi du jour
+                </p>
+                <h3 class="text-h3 font-bold text-dark-navy mb-4">
+                  {{ suggestion.title }}
+                </h3>
+              </div>
 
-            <div class="bg-rose-red/10 border-2 border-rose-red rounded-2xl px-8 py-3 anim-delay-3">
-              <span class="block text-xs font-bold text-rose-red uppercase">Page</span>
-              <span class="text-4xl font-black text-rose-red tabular-nums">{{ suggestion.page }}</span>
+              <div class="bg-rose-red/10 border-2 border-rose-red rounded-2xl px-8 py-3 anim-delay-3">
+                <span class="block text-xs font-bold text-rose-red uppercase">Page</span>
+                <span class="text-4xl font-black text-rose-red tabular-nums">{{ suggestion.page }}</span>
+              </div>
             </div>
         
             <p class="my-6 text-sm text-dark-navy/80 italic anim-delay-4">
               Prenez vos crayons, cette page n'attend que vous !
             </p>
 
-            <AppButton theme="skin-orange" @click="emit('close')" class="anim-delay-5">
-              C'est parti
-            </AppButton>
+            <div class="flex gap-2 w-full">
+              <AppButton 
+                theme="rose-red" 
+                @click="emit('reroll')" 
+                class="anim-delay-5 w-full"
+                :disabled="loading"
+              >
+                {{ loading ? 'Piochage...' : 'Relancer' }}
+              </AppButton>
+              
+              <AppButton 
+                theme="skin-orange" 
+                @click="emit('close')" 
+                class="anim-delay-5 w-full"
+                :disabled="loading"
+              >
+                C'est parti
+              </AppButton>
+            </div>
           </div>
         </div>
       </Transition>

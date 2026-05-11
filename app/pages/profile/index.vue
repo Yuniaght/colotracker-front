@@ -214,6 +214,8 @@ const requestAccountDeletion = async () => {
   <ModalRandomPage 
   :is-open="isModalOpen" 
   :suggestion="suggestion" 
+  :loading="loading"
   @close="isModalOpen = false" 
+  @reroll="fetchRandomPage"
 />
 </template>
