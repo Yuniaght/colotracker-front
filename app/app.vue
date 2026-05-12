@@ -2,7 +2,7 @@
 const {public: {directusUrl: directusUrl}} = useRuntimeConfig();
 
 useHead({
-  title: "Colotracker",
+  title: "",
   meta: [
     { name: 'description', content: "Votre application de suivi de livre de coloriage" }
   ],

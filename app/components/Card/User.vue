@@ -46,11 +46,11 @@ function copyToClipboard(stringToCopy: string){
     </div>
     <div class="pb-6 flex gap-4 text-center">
       <div class="bg-light-green rounded-xl w-full p-3">
-        <p class="text-h3 text-emerald-blue font-bold">{{ userStats?.bookCount }}</p>
+        <p class="text-h3 text-emerald-blue font-bold">{{ userStats?.bookCount ?? 0}}</p>
         <p>Livres</p>
       </div>
       <div class="bg-skin-orange rounded-xl w-full p-3">
-        <p class="text-h3 text-rose-red font-bold">{{ userStats?.completedPagesCount }}</p>
+        <p class="text-h3 text-rose-red font-bold">{{ userStats?.completedPagesCount ?? 0}}</p>
         <p>Coloriage</p>
       </div>
     </div>

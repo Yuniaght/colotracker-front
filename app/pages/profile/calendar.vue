@@ -23,6 +23,11 @@ if (error.value) {
   })
 }
 
+useSeoMeta({
+  title: 'Mon calendrier de réalisation',
+  description: 'Ayez un visuel sur vos réalisation faite mois après mois',
+  robots: 'noindex, nofollow',
+})
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">

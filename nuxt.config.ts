@@ -7,8 +7,16 @@ export default defineNuxtConfig({
   devServer: {
     host: '0.0.0.0'
   },
-
+  
+  modules: [
+            '@nuxtjs/seo',
+            '@vueuse/nuxt',
+            "@nuxt/image",
+            "@vee-validate/nuxt",
+          ],
+  
   runtimeConfig: {
+    siteURL: process.env.NUXT_PUBLIC_SITE_URL,
     directusAdminToken: process.env.DIRECTUS_TOKEN,
     public: {
       directusUrl: process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055',
@@ -19,15 +27,15 @@ export default defineNuxtConfig({
     }
   },
 
+  site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    name: 'Colotracker',
+    env: process.env.NUXT_SITE_ENV
+  },
+
   routeRules: {
   "/directus/**": { proxy: `${process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/**` } 
   },
-
-  modules: [
-            '@vueuse/nuxt',
-            "@nuxt/image",
-            "@vee-validate/nuxt",
-          ],
 
   vite: {
     plugins: [tailwindcss()],
@@ -38,6 +46,8 @@ export default defineNuxtConfig({
         'swiper/element/bundle',
         '@directus/sdk',
         'vue3-toastify',
+        'date-fns',
+        'date-fns/locale',
       ]
     }
   },
@@ -56,6 +66,10 @@ export default defineNuxtConfig({
     compilerOptions: {
       isCustomElement: (tag: string) => tag.startsWith('swiper')
     },
+  },
+
+  ogImage: {
+    enabled: false
   },
 }
 )

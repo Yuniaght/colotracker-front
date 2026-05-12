@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { handleAddBook, isConfirmModalOpen, handleModalConfirm } = useLibrary()
 const user = useDirectusUser()
+const config = useRuntimeConfig()
 const { $directus, $readItems } = useNuxtApp()
 const route = useRoute()
 const slug = route.params.slug as string
@@ -69,6 +70,17 @@ const categories = computed(() => {
 })
 
 const userConnected = computed(() => !!user.value)
+const bookImageUrl = book.value?.front_cover ? `${config.public.directusUrl}/assets/${book.value.front_cover.id}` : '/logo.png'
+
+useSeoMeta({
+  title: () => `${book.value?.name} - ${book.value?.author?.full_name}`,
+  description: () => `Consultez les détails sur le livre "${book.value?.name}".`,
+  ogTitle: () => `Livre : ${book.value?.name}`,
+  ogDescription: () => `Découvrez ${book.value?.name} sur ColoTracker.`,
+  ogImage: bookImageUrl,
+  twitterImage: bookImageUrl,
+  twitterCard: 'summary_large_image',
+})
 </script>
 
 <template>

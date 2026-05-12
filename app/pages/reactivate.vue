@@ -11,7 +11,6 @@ onMounted(async () => {
   }
 
   try {
-    // We send a POST to your specific Reactivation Flow
     await $directus.request(
       triggerFlow('POST', '9efd2b8b-12f1-4308-9f23-b2d161ce7c53', { 
         token: userToken  
@@ -21,6 +20,12 @@ onMounted(async () => {
     console.error(e);
   }
 });
+
+useSeoMeta({
+  title: 'Bon retour',
+  description: 'Nous sommes heureux de vous revoir parmis-nous!',
+  robots: 'noindex, nofollow',
+})
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">

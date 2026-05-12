@@ -116,6 +116,14 @@ watch([searchedQuery, selectedCategories], ([newSearch, newCats]) => {
 watch(categoriesFetchError, (err) => {
   if (err) console.error("Erreur catégories:", err)
 })
+
+useSeoMeta({
+  title: 'Catalogue des Livres',
+  description: 'Trouvez votre prochain livre de coloriage parmi des centaines de références.',
+  ogTitle: 'Explorez le catalogue ColoTracker',
+  ogImage: '/logo.png',
+  twitterCard: 'summary_large_image',
+})
 </script>
 
 <template>
@@ -148,20 +156,26 @@ watch(categoriesFetchError, (err) => {
       </form>
     </div>
     <div v-if="fetchingBooks && booksItems.length === 0" class="text-h2">Chargement des livres...</div>
-    <div v-if="booksItems && booksItems.length > 0"
+    <ul v-if="booksItems && booksItems.length > 0"
       class="grid responsive-layout justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" :class="{ 'opacity-50 pointer-events-none': pending }">
-      <CardBook v-for="item in booksItems" :key="item.slug" :item :user-connected="userConnected" @add-to-library="handleAddBook" />
-      <div v-if="bookFetchError" class="py-4 text-center text-rose-red">
-        <p>Erreur lors du chargement des livres suivants.</p>
-        <button @click="refreshNuxtData('books-list')" class="underline">Réessayer</button>
-      </div>
+      <li v-for="item in booksItems">
+        <CardBook  :key="item.slug" :item :user-connected="userConnected" @add-to-library="handleAddBook" />
+      </li>
+    </ul>
+    <div v-if="bookFetchError" class="py-4 text-center text-rose-red">
+      <p>Erreur lors du chargement des livres suivants.</p>
+      <button @click="refreshNuxtData('books-list')" class="underline">Réessayer</button>
     </div>
     <div v-else-if="bookFetchError" class="text-rose-red text-center py-10">
-      Une erreur est survenue lors de la récupération des livres.
+      <p class="text-h2">Une erreur est survenue lors de la récupération des livres.</p>
     </div>
-    <div v-else-if="!pending" class="text-center py-20">
+    <div v-else-if="pending && booksItems.length === 0" class="text-center py-20">
+         <p class="text-h2">Chargement des livres</p>
+    </div>
+    <div v-else-if="!pending && booksItems.length === 0" class="text-center py-20">
          <p class="text-h2">Aucun livre ne correspond à votre recherche.</p>
     </div>
+
     <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
   </section>
   <section class="responsive-padding-y responsive-padding-x text-center">
