@@ -6,7 +6,7 @@ const { $directus, $readItems } = useNuxtApp()
 const route = useRoute()
 const slug = route.params.slug as string
 
-const { data: book, error } = await useAsyncData('book-list', () => {
+const { data: book, error } = await useAsyncData(`book-detail-${slug}`, () => {
   return $directus.request(
     $readItems('books', {
       filter: {
@@ -79,8 +79,20 @@ useSeoMeta({
   ogDescription: () => `Découvrez ${book.value?.name} sur ColoTracker.`,
   ogImage: bookImageUrl,
   twitterImage: bookImageUrl,
-  twitterCard: 'summary_large_image',
+  twitterCard: 'summary_large_image'
 })
+
+useSchemaOrg([
+  defineBook({
+    name: book.value.name,
+    author: {
+      name: book.value.author.full_name,
+    },
+    numberOfPages: book.value.page_count,
+    datePublished: book.value.release_date,
+    image: bookImageUrl
+  })
+])
 </script>
 
 <template>
@@ -90,11 +102,11 @@ useSeoMeta({
         ⬅ Retour aux livres
       </AppLink>
     </div>
-    <div
+    <article
       class="bg-pure-white shadow-sm rounded-3xl px-4 lg:px-10 py-10 lg:grid-cols-[max-content_1fr] lg:grid gap-10">
       <div class="max-w-105 h-fit mx-auto lg:mx-0 pb-10 lg:pb-0">
         <nuxt-picture provider="directus" :src="`${book.front_cover.id}/${book.front_cover.filename_download}`"
-          :alt="book.front_cover.title" :img-attrs="{ class: 'object-cover w-full h-full rounded-xl mb-6' }" />
+          :alt="book.front_cover.title" :img-attrs="{ class: 'object-cover w-full h-full rounded-xl mb-6' }" loading="eager" fetchpriority="high" />
         <div v-if="userConnected" class="w-full">
           <AppButton theme="emerald-blue" class="w-full" @click="handleAddBook(book.id)">
             Ajouter à ma bibliothèque
@@ -134,14 +146,16 @@ useSeoMeta({
         </div>
         <div>
           <p class="pb-2">Catégories</p>
-          <div class="flex flex-wrap gap-2">
-            <nuxt-link v-for="cat in categories" :to="{ name: 'books', query: { categories: cat.id } }"
-              class="inline-block p-2 rounded-full transition-colors duration-200 text-sm font-medium bg-light-green text-dark-navy/70 hover:bg-skin-orange">{{
-              cat.name }}</nuxt-link>
-          </div>
+          <ul class="flex flex-wrap gap-2">
+            <li v-for="cat in categories">
+              <nuxt-link :to="{ name: 'books', query: { categories: cat.id } }"
+                class="inline-block p-2 rounded-full transition-colors duration-200 text-sm font-medium bg-light-green text-dark-navy/70 hover:bg-skin-orange">{{
+                cat.name }}</nuxt-link>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
+    </article>
   </section>
   <ModalConfirm :is-open="isConfirmModalOpen" @close="isConfirmModalOpen = false" @confirm="handleModalConfirm">
     <template #title>

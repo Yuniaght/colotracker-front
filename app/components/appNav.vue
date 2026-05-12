@@ -35,6 +35,12 @@ watch(y, (value, oldValue) => {
   scrolled.value = y.value > 75;
 });
 
+onKeyStroke('Escape', (e) => {
+  e.preventDefault()
+  isOpen.value = false
+  isProfileOpen.value = false
+})
+
 const publicLink = [
   { path: "/", name: "Accueil" },
   { path: "/books", name: "Livres" },
@@ -78,7 +84,7 @@ const directusAccessAuth = computed (() => {
             </li>
 
             <li v-else class="relative" ref="profileRef">
-              <button @click="toggleProfile" class="flex items-center focus:outline-none cursor-pointer pt-1">
+              <button @click="toggleProfile" class="flex items-center outline-none focus-visible:ring-2 focus-visible:ring-skin-orange rounded-full cursor-pointer pt-1">
                 <div
                   class="w-10 h-10 rounded-full border-2 border-skin-orange overflow-clip hover:border-opacity-70 transition-all">
                   <nuxt-picture v-if="user?.avatar != null" provider="directus"
@@ -98,7 +104,7 @@ const directusAccessAuth = computed (() => {
                 <AppLink :to="config.public.directusUrl + '/admin/content'" v-if="directusAccessAuth" class="w-full text-center py-2 hover:bg-gray-50" @click="toggleProfile">
                   Administration
                 </AppLink>
-                <button @click="$logout(); toggleProfile"
+                <button @click="$logout(); toggleProfile()"
                   class="w-full text-center py-2 cursor-pointer text-rose-red hover:text-dark-navy">
                   Déconnexion
                 </button>
@@ -107,7 +113,7 @@ const directusAccessAuth = computed (() => {
           </ul>
         </nav>
 
-        <button @click="toggleMenu" class="lg:hidden p-2 hamburger-button">
+        <button @click="toggleMenu" class="lg:hidden p-2 hamburger-button" aria-label="Ouvrir le menu" :aria-expanded="isOpen">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
@@ -127,7 +133,7 @@ const directusAccessAuth = computed (() => {
                   Administration
             </AppLink>
           </div>
-          <AppLink v-for="link in publicLink" @click="isOpen = false" :to="link.path">{{ link.name }}</AppLink>
+          <AppLink v-for="link in publicLink" :key="link.path" @click="isOpen = false" :to="link.path">{{ link.name }}</AppLink>
           <template v-if="!user">
             <AppLink @click="isOpen = false" to="/login">Connexion</AppLink>
             <AppLink @click="isOpen = false" to="/register">S'inscrire</AppLink>
