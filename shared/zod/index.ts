@@ -57,6 +57,10 @@ const editProfilePartial = zod.object({
   delete_avatar: zod.preprocess((val) => val === 'true' || val === true, zod.boolean().optional().default(false))
 })
 
+const reportPagePartial = zod.object({
+  reason: zod.string().min(1, "Vous devez entrer un justificatif de signalement")
+})
+
 export const zodShared = {
   registerPartial,
   askABookPartial,
@@ -64,4 +68,5 @@ export const zodShared = {
   problemUrlContactPartial,
   pagePartial,
   editProfilePartial,
+  reportPagePartial,
 }

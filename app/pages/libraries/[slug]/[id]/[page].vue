@@ -1,9 +1,11 @@
 <script setup lang="ts">
 const config = useRuntimeConfig()
+const loggedUser = useDirectusUser();
 const { $directus, $readItems } = useNuxtApp()
 const route = useRoute()
 const page = computed(() => parseInt((route.params.page as string).split("-")[2] || '0'))
 const libraryID = computed(() => parseInt((route.params.id as string)))
+const isOpen = ref(false)
 
 if (isNaN(page.value) || libraryID.value <= 0) {
   throw createError({ statusCode: 404, statusMessage: 'Page non trouvée', fatal: true })
@@ -13,6 +15,7 @@ const { data: data, pending, error } = await useAsyncData(`page-${page}-${route.
   return $directus.request(
     $readItems('completed_pages', {
       fields: [
+        "id",
         "page_number",
         "date_finished",
         "detailed_info",
@@ -126,14 +129,16 @@ useSeoMeta({
         </div>
         <h1 class="text-h1 pb-2">Page N°{{ data?.page_number }}</h1>
         <p class="pb-8 text-emerald-blue">Livre : {{ book.name }}</p>
-        <div class="p-6 bg-dim-white rounded-xl">
+        <div class="p-6 mb-6 bg-dim-white rounded-xl">
           <p class="border-b-2 pb-2 border-dark-navy/20">Details</p>
           <p class="pt-4 text-sm text-dark-navy/50">Date de réalisation</p>
           <nuxt-time :datetime="data?.date_finished" locale="fr-FR" year="numeric" month="long" day="numeric"/>
           <p class="pt-4 text-sm text-dark-navy/50">Info détaillées</p>
           <p class="whitespace-pre-line">{{ data?.detailed_info }}</p>
         </div>
+        <AppButton v-if="loggedUser" @click="isOpen = true" theme="rose-red">Signaler cette page</AppButton>
       </div>
     </div>
   </section>
+  <ModalReport v-if="loggedUser" @close="isOpen = false" :is-open="isOpen" :page-id="data?.id" :user-id="loggedUser.id"/>
 </template>
