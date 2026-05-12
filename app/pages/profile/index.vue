@@ -136,6 +136,11 @@ const requestAccountDeletion = async () => {
 
 const hasError = computed(() => statsError.value || activityError.value)
 
+useSeoMeta({
+  title: () => `Mon Tableau de Bord - ${user.value?.user_name}`,
+  ogTitle: 'Mon Espace Personnel',
+  robots: 'noindex, nofollow',
+})
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">
@@ -186,8 +191,8 @@ const hasError = computed(() => statsError.value || activityError.value)
         <div v-if="latestActivity?.length === 0">
           <p>Aucune activité n'a été enregistré pour ce compte</p>
         </div>
-        <div v-else v-for="activity in latestActivity" class="bg-dim-white rounded-md p-3 mb-4">
-          <div v-if="activity.type == 'page_done'" class="flex gap-4">
+        <ul v-else v-for="activity in latestActivity" class="bg-dim-white rounded-md p-3 mb-4">
+          <li v-if="activity.type == 'page_done'" class="flex gap-4">
             <div class="w-12 h-12 rounded-md overflow-hidden">
               <nuxt-picture 
                 provider="directus"
@@ -201,8 +206,8 @@ const hasError = computed(() => statsError.value || activityError.value)
               <h3 class="text-h3 font-semibold">Page {{ activity.page_number }} terminée.</h3>
               <p>{{ activity.library_from.book.name }} - <nuxt-time relative :datetime="activity.date_added"/></p>
             </div>
-          </div>
-          <div v-if="activity.type == 'new_book'" class="flex gap-4">
+          </li>
+          <li v-if="activity.type == 'new_book'" class="flex gap-4">
             <div class="w-12 h-12 rounded-md overflow-hidden">
               <nuxt-picture 
                 provider="directus"
@@ -216,8 +221,8 @@ const hasError = computed(() => statsError.value || activityError.value)
               <h3 class="text-h3 font-semibold">Nouveau livre ajouté</h3>
               <p>{{ activity.book.name }} - <nuxt-time relative :datetime="activity.date_added"/></p>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     </div>
   </section>

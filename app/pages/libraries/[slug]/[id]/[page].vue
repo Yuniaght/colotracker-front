@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const config = useRuntimeConfig()
 const { $directus, $readItems } = useNuxtApp()
 const route = useRoute()
 const page = computed(() => parseInt((route.params.page as string).split("-")[2] || '0'))
@@ -78,6 +79,16 @@ if (!data.value) {
 
 const user = computed(() => data.value?.library_from?.user)
 const book = computed(() => data.value?.library_from?.book)
+
+const pageUrl = data.value.image ? `${config.public.directusUrl}/assets/${data.value.image.id}` : '/logo.png'
+
+useSeoMeta({
+  title: () => `Page N° ${data.value?.page_number} du livre ${book.value.name} de ${user.value.user_name}`,
+  description: () => `Détail de la page N° ${data.value?.page_number} du livre ${book.value.name} coloriée par ${user.value.user_name}?.`,
+  ogTitle: () => `Page N° ${data.value?.page_number} du livre ${book.value.name} de ${user.value.user_name}`,
+  ogImage: pageUrl,
+  twitterCard: 'summary',
+})
 </script>
 
 <template>

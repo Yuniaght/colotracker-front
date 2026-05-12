@@ -63,6 +63,11 @@ const submitForm = handleSubmit(async (values) => {
 
 }) 
 
+useSeoMeta({
+  title: () => `Ajout de page - ${data.value?.name}`,
+  description: () => `Formulaire d'ajout de page coloriée dans le livre ${data.value?.name}.`,
+  robots: 'noindex, nofollow',
+})
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">

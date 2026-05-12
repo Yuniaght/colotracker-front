@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { $directus, $readItem } = useNuxtApp()
+const config = useRuntimeConfig()
+const { $directus, $readItem, $readUsers } = useNuxtApp()
 const route = useRoute()
 const id = route.params.id as string
 const slug = route.params.slug as string
@@ -55,6 +56,22 @@ const { data: data, error } = await useAsyncData(`book-${id}`, () => {
   )
 })
 
+const { data: users, error: fetchUserError } = await useAsyncData(`oguser-${slug}`, () => {
+  return $directus.request(
+    $readUsers({
+      fields: [
+        "user_name",
+      ],
+      filter: {
+        _and: [
+          { slug: { _eq: slug } }
+        ]
+      },
+      limit: 1
+    })
+  )
+})
+
 if (error.value) {
   throw createError({ statusCode: 500, statusMessage: 'Erreur serveur', fatal: true })
 }
@@ -63,6 +80,15 @@ if (!data.value) {
   throw createError({ statusCode: 404, statusMessage: 'Ce livre n’est pas dans la bibliothèque de ce membre', fatal: true })
 }
 
+if (fetchUserError.value || !users.value || users.value.length === 0) {
+  throw createError({ 
+    statusCode: 404, 
+    statusMessage: "Ce membre n'existe pas",
+    fatal: true 
+  })
+}
+
+const user = users.value[0]
 const book = computed(() => { return data.value?.book })
 const completed_pages = computed(() => {
   if (!data.value?.completed_pages) return []
@@ -86,6 +112,16 @@ const showLimit = computed(() => {
 const handleInfiniteScroll = () => {
   visibleCount.value += 100
 }
+
+const coverUrl = book?.value?.front_cover ? `${config.public.directusUrl}/assets/${book.value.front_cover?.id}` : '/logo.png'
+
+useSeoMeta({
+  title: () => `Tracker du livre ${book.value?.name} de ${user?.user_name || 'un membre'}`,
+  description: () => `Regardez le suivi du livre ${book.value?.name} de ${user?.user_name}.`,
+  ogTitle: () => `Tracker ${book.value?.name} de ${user?.user_name}`,
+  ogImage: coverUrl,
+  twitterCard: 'summary',
+})
 </script>
 
 <template>
@@ -115,8 +151,8 @@ const handleInfiniteScroll = () => {
           </div>
         </div>
       </div>
-      <div class="grid grid-cols-5 md:grid-cols-10 content-start p-4 gap-3">
-        <div v-for="n in showLimit" class="aspect-square bg-dim-white rounded relative flex items-center justify-center overflow-clip">
+      <ul class="grid grid-cols-5 md:grid-cols-10 content-start p-4 gap-3">
+        <li v-for="n in showLimit" class="aspect-square bg-dim-white rounded relative flex items-center justify-center overflow-clip">
           <nuxt-link :to="{name: 'libraries-slug-id-page', params: {slug: slug, id: route.params.id, page: `${libraryId}-page-${n}`}}" v-if="getCompletedPage(n)" class="cursor-pointer w-full h-full">
             <nuxt-picture 
               provider="directus"
@@ -128,8 +164,8 @@ const handleInfiniteScroll = () => {
               /> 
           </nuxt-link>
           <p v-else class="text-h2">{{ n }}</p>
-        </div>
-      </div>
+        </li>
+      </ul>
       <AppInfiniteScrollingTrigger v-if="showLimit < (book?.page_count || 0)" @trigger="handleInfiniteScroll" />
     </div>
   </section>

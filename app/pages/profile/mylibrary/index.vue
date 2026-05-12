@@ -108,6 +108,12 @@ watch(error, (newErr) => {
     $toast.error("Erreur lors de la recherche...")
   }
 })
+
+useSeoMeta({
+  title: 'Ma Bibliothèque',
+  description: 'Gérez vos encours et vos livres terminés.',
+  robots: 'noindex, nofollow',
+})
 </script>
 <template>
   <section class="responsive-padding-y responsive-padding-x">
@@ -132,10 +138,12 @@ watch(error, (newErr) => {
       <p v-if="debouncedSearch">Aucun livre ne correspond à "{{ debouncedSearch }}"</p>
       <p v-else>Votre bibliothèque est vide. <AppLink to="/catalogue">Ajouter un livre</AppLink></p>
     </div>
-    <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 transition-opacity"
+    <ul class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 transition-opacity"
         :class="{ 'opacity-50 pointer-events-none': pending }">
-      <CardLibraryBook v-for="item in booksItems" :key="item.id" :item="item" target="profile-mylibrary-id" delete-button @remove-from-library="confirmDelete"/>
-    </div>
+        <li v-for="item in booksItems">
+          <CardLibraryBook :key="item.id" :item="item" target="profile-mylibrary-id" delete-button @remove-from-library="confirmDelete"/>
+        </li>
+    </ul>
     <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
   </section>
   <ModalConfirm 

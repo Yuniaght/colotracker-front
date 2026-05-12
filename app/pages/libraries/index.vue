@@ -6,7 +6,7 @@ const fetchingUsers = ref(false)
 const { page, items: usersItems, hasMore, handleLoadMore, resetPagination, pageSize } = useInfiniteScroll(usersData, fetchingUsers, { pageSize: 9 })
 
 
-const { values, defineField } = useForm<{
+const { defineField } = useForm<{
   search: string,
 }>({
   initialValues: {
@@ -89,6 +89,13 @@ watch([searchedQuery], ([newSearch]) => {
   }, { replace: true })
 })
 
+useSeoMeta({
+  title: 'Bibliothèques de la Communauté',
+  description: 'Découvrez les collections et les chefs-d\'œuvre des autres membres.',
+  ogTitle: 'Communauté ColoTracker',
+  ogImage: '/logo.png',
+})
+
 </script>
 
 <template>
@@ -113,9 +120,11 @@ watch([searchedQuery], ([newSearch]) => {
       <p class="text-h2">Aucun membre ne correspond à votre recherche.</p>
       <AppButton @click="searchedQuery = ''" class="mt-4" theme="emerald-blue">Effacer la recherche</AppButton>
     </div>
-    <div v-else class="responsive-layout grid gap-6 justify-center grid-cols-[minmax(0,27rem)] md:grid-cols-[repeat(2,minmax(0,27rem))] lg:grid-cols-[repeat(3,minmax(0,27rem))]" :class="{ 'opacity-50 pointer-events-none': pending }">
-      <CardUser v-for="user in usersItems" :key="user.id" :item="user" show-button />
-    </div>
+    <ul v-else class="responsive-layout grid gap-6 justify-center grid-cols-[minmax(0,27rem)] md:grid-cols-[repeat(2,minmax(0,27rem))] lg:grid-cols-[repeat(3,minmax(0,27rem))]" :class="{ 'opacity-50 pointer-events-none': pending }">
+      <li v-for="user in usersItems">
+        <CardUser :key="user.id" :item="user" show-button />
+      </li>
+    </ul>
     <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
   </section>
 </template>

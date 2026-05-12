@@ -48,6 +48,11 @@ const submitForm = handleSubmit(async (values) => {
   }
 
 }) 
+
+useSeoMeta({
+  title: 'Proposer un livre',
+  description: 'Aidez-nous à enrichir la base de données en proposant un nouveau livre.',
+})
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">

@@ -65,6 +65,14 @@ if (error.value || !data.value) {
     fatal: true 
   })
 }
+
+useSeoMeta({
+  title: 'À propos de nous | ColoTracker',
+  description: 'Découvrez l\'équipe derrière ColoTracker et notre mission pour aider les coloristes à suivre leur passion.',
+  ogTitle: 'L\'histoire de ColoTracker',
+  ogImage: '/logo.png',
+  twitterCard: 'summary',
+})
 </script>
 <template>
   <section class="text-center responsive-padding-y responsive-padding-x">

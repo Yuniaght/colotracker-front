@@ -56,6 +56,12 @@ const submitForm = handleSubmit(async (values) => {
   }
 
 }) 
+
+useSeoMeta({
+  title: 'Editer mon profile',
+  description: 'Modifiez vos paramètres utilisateurs',
+  robots: 'noindex, nofollow',
+})
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">

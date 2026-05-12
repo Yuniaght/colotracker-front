@@ -23,6 +23,11 @@ if (error.value || !data.value) {
   })
 }
 
+useSeoMeta({
+  title: 'Conditions Générales',
+  description: 'Consultez les conditions d\'utilisation de la plateforme.',
+  robots: 'noindex, follow',
+})
 </script>
 <template>
   <section v-html="data?.content" class="responsive-padding-t responsive-padding-x responsive-layout directus-content" />

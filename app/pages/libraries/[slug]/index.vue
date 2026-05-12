@@ -130,6 +130,17 @@ watch([searchedQuery], ([newSearch]) => {
     }
   }, { replace: true })
 })
+
+const config = useRuntimeConfig()
+const avatarUrl = user?.avatar ? `${config.public.directusUrl}/assets/${user.avatar.id}` : '/logo.png'
+
+useSeoMeta({
+  title: () => `Bibliothèque de ${user?.user_name || 'un membre'}`,
+  description: () => `Découvrez les livres et les coloriages de ${user?.user_name}.`,
+  ogTitle: () => `Collection de ${user?.user_name}`,
+  ogImage: avatarUrl,
+  twitterCard: 'summary',
+})
 </script>
 
 <template>
@@ -164,9 +175,11 @@ watch([searchedQuery], ([newSearch]) => {
           {{ debouncedSearch ? 'Aucun livre ne correspond à votre recherche.' : 'Ce membre n\'a pas encore de livres dans sa bibliothèque.' }}
         </div>
 
-        <div v-else class="grid lg:grid-cols-2 gap-2" :class="{ 'opacity-50 pointer-events-none': pending }">
-          <CardLibraryBook v-for="item in libraryItems" :key="item.id" :item="item" :user-slug="user.slug" target="libraries-slug-id" />
-        </div>
+        <ul v-else class="grid lg:grid-cols-2 gap-2" :class="{ 'opacity-50 pointer-events-none': pending }">
+          <li v-for="item in libraryItems">
+            <CardLibraryBook :key="item.id" :item="item" :user-slug="user.slug" target="libraries-slug-id" />
+          </li>
+        </ul>
         <AppInfiniteScrollingTrigger v-if="!pending && hasMore" @trigger="handleLoadMore"/> 
       </div>
     </div>

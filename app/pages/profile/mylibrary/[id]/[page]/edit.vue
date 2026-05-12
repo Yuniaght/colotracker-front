@@ -97,6 +97,11 @@ const submitForm = handleSubmit(async (values) => {
 
 }) 
 
+useSeoMeta({
+  title: () => `Edition : Page N° ${pageInfo.value?.page_number}`,
+  description: () => `Edition des informations de la page N° ${data.value?.page_number}.`,
+  robots: 'noindex, nofollow',
+})
 </script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const config = useRuntimeConfig()
 const { $directus, $readItem } = useNuxtApp()
 const { isDeleteModalOpen, confirmDelete, executeDeletion } = useLibrary()
 const route = useRoute()
@@ -9,7 +10,7 @@ if (isNaN(libraryId)) {
   throw createError({ statusCode: 404, statusMessage: 'Format de livre invalide' })
 }
 
-const { data: data, error } = await useAsyncData(`book-${id}`, () => {
+const { data, error } = await useAsyncData(`book-${id}`, () => {
   return $directus.request(
     $readItem('library', libraryId, {
       fields: [
@@ -93,6 +94,12 @@ const confirmDeletionAndRefresh = async () => {
     return navigateTo({ name: 'profile-mylibrary' })
   })
 }
+
+useSeoMeta({
+  title: () => `Suivi : ${data.value?.book?.name} | ColoTracker`,
+  ogImage: () => data.value?.book?.front_cover ? `${config.public.directusUrl}/assets/${data.value.book.front_cover.id}` : '/logo.png',
+  robots: 'noindex, nofollow',
+})
 </script>
 
 <template>

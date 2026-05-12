@@ -60,6 +60,17 @@ const options = {
     `.swiper-wrapper { transition-timing-function: linear !important; }`
   ],
 } as SwiperOptions
+
+useSeoMeta({
+  title: 'ColoTracker - Gérez votre collection de coloriages',
+  ogTitle: 'ColoTracker - La plateforme des passionnés de coloriage',
+  description: 'Organisez votre bibliothèque de livres, suivez votre progression et partagez vos mises en couleur avec la communauté.',
+  ogDescription: 'Rejoignez ColoTracker pour donner vie à votre collection de coloriages.',
+  ogImage: '/logo.png',
+  twitterCard: 'summary_large_image',
+  ogType: 'website',
+})
+
 </script>
 
 <template>

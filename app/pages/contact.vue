@@ -74,6 +74,11 @@ watch(
     {immediate: true}
 )
 
+useSeoMeta({
+  title: 'Contactez-nous',
+  description: 'Une question ou une suggestion ? Envoyez-nous un message.',
+  ogTitle: 'Contacter le support ColoTracker',
+})
 </script>
 <template>
 <section class="responsive-padding-x responsive-padding-y">

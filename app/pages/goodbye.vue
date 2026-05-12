@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useSeoMeta({
+  title: 'Au revoir',
+  description: 'Nous sommes navrés de vous voir partir',
+  robots: 'noindex, nofollow',
+})
+</script>
 <template>
   <section class="responsive-padding-x responsive-padding-y">
     <div class="mx-auto max-w-250 p-8 bg-pure-white rounded-2xl shadow-sm text-center">

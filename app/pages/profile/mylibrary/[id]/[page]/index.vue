@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const config = useRuntimeConfig()
 const { isDeleteModalOpen, confirmDelete, executeDeletion } = useLibrary()
 const { $directus, $readItems } = useNuxtApp()
 const route = useRoute()
@@ -6,7 +7,7 @@ const page = computed(() => parseInt((route.params.page as string).split("-")[2]
 const libraryID = computed(() => parseInt((route.params.id as string)))
 
 
-const { data: data, error } = await useAsyncData(`page-${page.value}-${route.params.id}`, () => {
+const { data, error } = await useAsyncData(`page-${page.value}-${route.params.id}`, () => {
   return $directus.request(
     $readItems('completed_pages', {
       fields: [
@@ -82,8 +83,11 @@ const confirmDeletionAndRefresh = async () => {
   })
 }
 
-
-
+useSeoMeta({
+  title: () => `Page N° ${data.value?.page_number} du livre ${data?.value?.library_from?.book.name} de ma collection`,
+  description: () => `Détail de la page N° ${data.value?.page_number} du livre ${data.value?.library_from?.book.name} coloriée par ${data.value?.library_from?.user.user_name}?.`,
+  robots: 'noindex, nofollow',
+})
 </script>
 
 <template>
