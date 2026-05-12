@@ -3,6 +3,7 @@ const {public: {directusUrl: directusUrl}} = useRuntimeConfig();
 
 useHead({
   title: "",
+  htmlAttrs: { lang: 'fr' },
   meta: [
     { name: 'description', content: "Votre application de suivi de livre de coloriage" }
   ],
