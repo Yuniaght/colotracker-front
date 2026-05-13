@@ -1,6 +1,9 @@
 import * as zod from "zod";
 import {minFiles,maxFiles, maxSize, allowedTypes} from '#shared/zod'
 import {defineForm, zStringRuleConstructor, zMultipleFilesConstructor} from "~~/server/utils/validation/zod";
+import {useZCaptcha} from "~~/server/utils/composables/useForm";
+
+const zCaptcha = useZCaptcha()
 
 export const askABookConfig = defineForm({
   schema: {
@@ -15,7 +18,8 @@ export const askABookConfig = defineForm({
                 maxFiles: maxFiles,
                 maxFileSizeMB: maxSize,
                 allowedExtensions: allowedTypes
-            })
+            }),
+        token: zCaptcha
     })
   },
   filesKeys: ['book_front_cover']

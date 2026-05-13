@@ -37,10 +37,10 @@ const submitForm = handleSubmit(async (values) => {
       $toast.error('Résolution du captcha échouée, veuillez réessayer.');
       return;
     }
-    
+
     const payloadBody = (values.avatar && values.avatar.length > 0)
-        ? serialize({ ...values, id: user.value.id })
-        : { ...values, id: user.value.id }
+        ? serialize({ ...values, id: user.value.id, token: res.token })
+        : { ...values, id: user.value.id, token: res.token }
     
     await $fetch('/api/editprofile', {
       method: 'POST',

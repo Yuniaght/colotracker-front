@@ -40,7 +40,7 @@ const { values: formValues, handleSubmit, resetForm } = useForm<FormValues>({
 const {executeRecaptcha} = useGoogleRecaptcha();
 
 const submitForm = handleSubmit(async (values) => {
-  
+
   let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
 
   try {
@@ -52,7 +52,7 @@ const submitForm = handleSubmit(async (values) => {
       return;
     }
 
-    const payloadBody = { ...values }
+    const payloadBody = { ...values, token: res.token }
     const queryParams = { form_type: values.type }
     
     await $fetch('/api/contact', {

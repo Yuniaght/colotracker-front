@@ -50,10 +50,11 @@ const submitForm = handleSubmit(async (values) => {
       $toast.error('Résolution du captcha échouée, veuillez réessayer.');
       return;
     }
-    
+
     const payloadBody = serialize({ 
       ...values,
-      library_from: libraryId
+      library_from: libraryId,
+      token: res.token
     })
     
     await $fetch('/api/addpage', {

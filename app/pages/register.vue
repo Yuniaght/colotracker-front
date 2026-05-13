@@ -30,8 +30,8 @@ const submitForm = handleSubmit(async (values) => {
       return;
     }
     const payloadBody = (values.avatar && values.avatar.length > 0)
-        ? serialize({ ...values})
-        : { ...values }
+        ? serialize({ ...values, token: res.token})
+        : { ...values, token: res.token }
     
     const response = await $fetch('/api/register', {
       method: 'POST',

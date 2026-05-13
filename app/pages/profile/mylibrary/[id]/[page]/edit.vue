@@ -74,7 +74,10 @@ const {executeRecaptcha} = useGoogleRecaptcha();
 
 const submitForm = handleSubmit(async (values) => {
   let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
+
   try {
+    res = await executeRecaptcha('form')
+
     if (!res || !res.token) {
 
       $toast.error('Résolution du captcha échouée, veuillez réessayer.');
@@ -83,8 +86,8 @@ const submitForm = handleSubmit(async (values) => {
 
 
     const payloadBody = (values.image && values.image.length > 0)
-        ? serialize({ ...values, library_from: libraryId, id: pageInfo.value.id })
-        : { ...values, library_from: libraryId, id: pageInfo.value.id }
+        ? serialize({ ...values, library_from: libraryId, id: pageInfo.value.id, token: res.token })
+        : { ...values, library_from: libraryId, id: pageInfo.value.id, token: res.token }
     
     const response = await $fetch('/api/editpage', {
       method: 'POST',
