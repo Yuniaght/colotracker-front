@@ -13,13 +13,11 @@ const baseSchema = zod.object({type: subjectEnum})
 const componentByType = {
   message: resolveComponent('FormMessage'),
   copyright: resolveComponent('FormReclamation'),
-  offensive_content: resolveComponent('FormReclamation'),
 } as const
 
 const schemaByType = {
   message: baseFields,
   copyright: reclamationFields,
-  offensive_content: reclamationFields,
 } as const
 
 const DEFAULT: FormValues['type'] = 'message'
@@ -92,10 +90,6 @@ useSeoMeta({
 
               <InputRadio name="type" checked-value="copyright" class="uppercase">
                 Droit d'auteur
-              </InputRadio>
-
-              <InputRadio name="type" checked-value="offensive_content" class="uppercase">
-                Contenu offensant
               </InputRadio>
             </div>
     <component :is="componentByType[formValues.type]" ref="theForm"/>
