@@ -70,9 +70,17 @@ const { handleSubmit, setErrors } = useForm<EditPageFormValues>({
   validationSchema: validationSchema.value
 })
 
+const {executeRecaptcha} = useGoogleRecaptcha();
 
 const submitForm = handleSubmit(async (values) => {
+  let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
   try {
+    if (!res || !res.token) {
+
+      $toast.error('Résolution du captcha échouée, veuillez réessayer.');
+      return;
+    }
+
 
     const payloadBody = (values.image && values.image.length > 0)
         ? serialize({ ...values, library_from: libraryId, id: pageInfo.value.id })

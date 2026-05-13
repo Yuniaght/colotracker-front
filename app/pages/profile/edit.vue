@@ -4,6 +4,7 @@ import {toTypedSchema} from "@vee-validate/zod";
 import {editProfileSchema, type editProfileValues} from '~/components/Form/editProfileSchema'
 
 const { $toast, $fetchUser } = useNuxtApp()
+const {executeRecaptcha} = useGoogleRecaptcha();
 const user = useDirectusUser()
 
 const validationSchema = toTypedSchema(editProfileSchema)
@@ -21,13 +22,22 @@ const { values: formValues, handleSubmit, setErrors, meta } = useForm<editProfil
 })
 
 
+
 const submitForm = handleSubmit(async (values) => {
+  let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
   if (!meta.value.dirty) {
     $toast.error("Vous n'avez modifié aucune information")
     return
   }
   try {
+    res = await executeRecaptcha('form')
 
+    if (!res || !res.token) {
+
+      $toast.error('Résolution du captcha échouée, veuillez réessayer.');
+      return;
+    }
+    
     const payloadBody = (values.avatar && values.avatar.length > 0)
         ? serialize({ ...values, id: user.value.id })
         : { ...values, id: user.value.id }

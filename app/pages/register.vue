@@ -2,6 +2,7 @@
 import {serialize} from 'object-to-formdata'
 import {toTypedSchema} from "@vee-validate/zod";
 import {registrationSchema, type RegistrationFormValues} from '~/components/Form/registrationSchema'
+const { $toast } = useNuxtApp()
 
 const registrationStatus = ref<{ type: 'idle' | 'success' | 'error', message?: string }>({ 
   type: 'idle' 
@@ -9,15 +10,25 @@ const registrationStatus = ref<{ type: 'idle' | 'success' | 'error', message?: s
 
 const validationSchema =  toTypedSchema(registrationSchema)
 
-const { values: formValues, handleSubmit, setFieldValue, resetForm, setErrors } = useForm<RegistrationFormValues>({
+const { handleSubmit, resetForm, setErrors } = useForm<RegistrationFormValues>({
   validationSchema
 })
 
+const {executeRecaptcha} = useGoogleRecaptcha();
+
 const submitForm = handleSubmit(async (values) => {
 
+  let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
   registrationStatus.value = { type: 'idle' }
 
   try {
+    res = await executeRecaptcha('form')
+
+    if (!res || !res.token) {
+
+      $toast.error('Résolution du captcha échouée, veuillez réessayer.');
+      return;
+    }
     const payloadBody = (values.avatar && values.avatar.length > 0)
         ? serialize({ ...values})
         : { ...values }

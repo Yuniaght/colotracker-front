@@ -18,12 +18,18 @@ export default defineNuxtConfig({
   runtimeConfig: {
     siteURL: process.env.NUXT_PUBLIC_SITE_URL,
     directusAdminToken: process.env.DIRECTUS_TOKEN,
+    recaptcha: {
+      v3SecretKey: process.env.NUXT_RECAPTCHA_V3_SECRET_KEY
+    },
     public: {
       directusUrl: process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055',
       superAdminRoleId: process.env.NUXT_PUBLIC_SUPER_ADMIN_ROLE_ID,
       adminRoleId: process.env.NUXT_PUBLIC_ADMIN_ROLE_ID,
       moderatorRoleId: process.env.NUXT_PUBLIC_MODERATOR_ROLE_ID,
       userRoleId: process.env.NUXT_PUBLIC_USER_ROLE_ID,
+      recaptcha: {
+        v3SiteKey: process.env.NUXT_PUBLIC_RECAPTCHA_V3_SITE_KEY,
+      },
     }
   },
 
