@@ -4,12 +4,12 @@
 
 <template>
 <InputTextArea
-      label="message"
-      name="message"
-      input-id="message"
+      label="reason"
+      name="reason"
+      input-id="reason"
       placeholder="Votre signalement"
       type="text">
-    <label class="font-semibold block mb-2" for="message">Votre signalement</label>
+    <label class="font-semibold block mb-2" for="reason">Votre signalement</label>
   </InputTextArea>  
 </template>
 

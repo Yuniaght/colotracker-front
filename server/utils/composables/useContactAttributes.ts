@@ -6,8 +6,7 @@ export const formTypes = Object.values(subjectEnum.enum);
 
 const formTypesLabels: Record<(typeof formTypes)[number], string> = {
     "message": "Nouveau message",
-    "copyright": "Réclamation Droit d'Auteur",
-    "offensive_content": "Signalement Contenu Offensant",
+    "copyright": "Réclamation Droit d'Auteur"
 };
 
 function useMessageForm() {
@@ -23,7 +22,7 @@ function useMessageForm() {
     });
 }
 
-function useLegalForm<T extends "copyright" | "offensive_content">(type: T) {
+function useLegalForm<T extends "copyright">(type: T) {
     return defineForm({
         schema: {
             body: z.object({
@@ -39,7 +38,6 @@ function useLegalForm<T extends "copyright" | "offensive_content">(type: T) {
 export const formRegistry = {
     message: () => useMessageForm(),
     copyright: () => useLegalForm('copyright'),
-    offensive_content: () => useLegalForm('offensive_content'),
 } as const;
 
 

@@ -10,12 +10,11 @@ export const reclamationFields = zod.object({
 })
 
 const baseSchema = zod.object({type: zod.literal("message"), ...baseFields.shape})
-const reclamationSchema = (lit: "copyright" | "offensive_content") => zod.object({type: zod.literal(lit), ...reclamationFields.shape})
+const reclamationSchema = zod.object({type: zod.literal("copyright"), ...reclamationFields.shape})
 
 export const formSchema = zod.discriminatedUnion('type', [
   baseSchema,
-  reclamationSchema("copyright"),
-  reclamationSchema("offensive_content")
+  reclamationSchema
 ])
 
 export type FormValues = zod.infer<typeof formSchema>

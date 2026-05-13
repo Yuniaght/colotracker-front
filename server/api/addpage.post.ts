@@ -1,4 +1,4 @@
-import { createItem, uploadFiles, createDirectus, readItem, readMe } from '@directus/sdk';
+import { createItem, uploadFiles, readItem, readMe } from '@directus/sdk';
 import { addPageConfig } from '../utils/composables/usePageAttributes';
 import { parseMultiPartData, splitBodyFiles } from "~~/server/utils/composables/parseMultiPartData";
 import * as z from 'zod';
@@ -87,10 +87,8 @@ export default defineEventHandler(async (event) => {
     await directusAdmin.request(createItem("completed_pages", {
               ...finalPayload
             } as CompletedPage));
-            console.log(19)
     return {
       success: true,
-
     };
 
   } catch (e: any) {

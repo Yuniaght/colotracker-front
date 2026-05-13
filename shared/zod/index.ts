@@ -4,7 +4,7 @@ export const maxSize = 1024 * 1024 * 0.5 // 512KB
 export const minFiles = 1
 export const maxFiles = 1
 export const allowedTypes: zod.core.util.MimeTypes[] = ['image/webp', 'image/png', 'image/jpeg', 'image/jpg',]
-export const subjectEnum = zod.enum(["message", "copyright", "offensive_content"])
+export const subjectEnum = zod.enum(["message", "copyright"])
 export const emptyAsNull = (val: unknown) => (val === '' ? null : val);
 
 const registerPartial = zod.object({
