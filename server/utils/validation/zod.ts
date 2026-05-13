@@ -55,6 +55,21 @@ export function zMultipleFilesConstructor(options?: {
         );
 }
 
+export function zCaptcha(token: string, minScore = 0.5) {
+    return z.string().superRefine(async (val, ctx) => {
+        const response: any = await $fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${token}&response=${val}`)
+
+        if (!response.success) {
+            ctx.addIssue({ code: 'custom', message: 'Invalid recaptcha token' });
+            return;
+        }
+
+        if (typeof response.score === 'number' && response.score < minScore) {
+            ctx.addIssue({ code: 'custom', message: 'Recaptcha score too low' });
+        }
+    });
+}
+
 export function defineForm<
     Body extends AnyZodObject,
     Query extends AnyZodObject | undefined = undefined,

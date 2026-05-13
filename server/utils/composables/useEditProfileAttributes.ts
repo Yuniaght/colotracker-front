@@ -1,7 +1,9 @@
 import * as zod from "zod";
 import {emptyAsNull, maxFiles, maxSize, allowedTypes, zodShared} from '#shared/zod'
 import {defineForm, zStringRuleConstructor, zMultipleFilesConstructor} from "~~/server/utils/validation/zod";
+import {useZCaptcha} from "~~/server/utils/composables/useForm";
 
+const zCaptcha = useZCaptcha()
 
 export const editProfileFormConfig = defineForm({
     schema: {
@@ -11,7 +13,8 @@ export const editProfileFormConfig = defineForm({
                 maxFiles: maxFiles,
                 maxFileSizeMB: maxSize,
                 allowedExtensions: allowedTypes
-            })
+            }),
+            token: zCaptcha
         })
     },
     filesKeys: ['avatar']

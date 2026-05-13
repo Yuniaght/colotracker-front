@@ -12,13 +12,24 @@ const { handleSubmit, resetForm, setErrors } = useForm<askABookFormValues>({
   validationSchema
 })
 
+const {executeRecaptcha} = useGoogleRecaptcha();
+
 const submitForm = handleSubmit(async (values) => {
   askABookStatus.value = { type: 'idle' }
+  let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
 
   try {
+    res = await executeRecaptcha('form')
+
+    if (!res || !res.token) {
+
+      $toast.error('Résolution du captcha échouée, veuillez réessayer.');
+      return;
+    }
+
     const payloadBody = (values.book_front_cover && values.book_front_cover.length > 0)
-        ? serialize({ ...values})
-        : { ...values }
+        ? serialize({ ...values, token: res.token})
+        : { ...values, token: res.token }
 
     const response = await $fetch('/api/askbook', {
       method: 'POST',

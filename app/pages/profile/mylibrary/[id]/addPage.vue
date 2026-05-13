@@ -37,11 +37,24 @@ const { values: formValues, handleSubmit, setErrors } = useForm<AddPageFormValue
   validationSchema: validationSchema.value
 })
 
+const {executeRecaptcha} = useGoogleRecaptcha();
+
+
 const submitForm = handleSubmit(async (values) => {
+  let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
   try {
+    res = await executeRecaptcha('form')
+
+    if (!res || !res.token) {
+
+      $toast.error('Résolution du captcha échouée, veuillez réessayer.');
+      return;
+    }
+
     const payloadBody = serialize({ 
       ...values,
-      library_from: libraryId
+      library_from: libraryId,
+      token: res.token
     })
     
     await $fetch('/api/addpage', {

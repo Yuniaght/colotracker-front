@@ -37,9 +37,22 @@ const { values: formValues, handleSubmit, resetForm } = useForm<FormValues>({
   validationSchema,
 })
 
+const {executeRecaptcha} = useGoogleRecaptcha();
+
 const submitForm = handleSubmit(async (values) => {
+
+  let res: Awaited<ReturnType<typeof executeRecaptcha>> | null = null;
+
   try {
-    const payloadBody = { ...values }
+    res = await executeRecaptcha('form')
+
+    if (!res || !res.token) {
+
+      $toast.error('Résolution du captcha échouée, veuillez réessayer.');
+      return;
+    }
+
+    const payloadBody = { ...values, token: res.token }
     const queryParams = { form_type: values.type }
     
     await $fetch('/api/contact', {

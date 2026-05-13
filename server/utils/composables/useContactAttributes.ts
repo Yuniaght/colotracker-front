@@ -1,6 +1,9 @@
 import * as z from "zod";
 import { defineForm } from "~~/server/utils/validation/zod";
 import { zodShared, subjectEnum } from '#shared/zod'
+import {useZCaptcha} from "~~/server/utils/composables/useForm";
+
+const zCaptcha = useZCaptcha()
 
 export const formTypes = Object.values(subjectEnum.enum);
 
@@ -14,6 +17,7 @@ function useMessageForm() {
         schema: {
             body: z.object({
                 ...zodShared.commonContactPartial.shape,
+                token: zCaptcha
             })
         },
         getSubject(body: z.infer<typeof zodShared.commonContactPartial>) {
@@ -27,6 +31,7 @@ function useLegalForm<T extends "copyright">(type: T) {
         schema: {
             body: z.object({
                 ...zodShared.problemUrlContactPartial.shape,
+                token: zCaptcha
             })
         },
         getSubject(body: z.infer<typeof zodShared.problemUrlContactPartial>) {
