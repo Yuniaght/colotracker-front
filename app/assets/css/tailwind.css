@@ -8,6 +8,7 @@
 @import "./components/button.css"; 
 @import "./components/toast.css";
 @import "./components/directus_content.css";
+@import "./components/cookies.css";
 
 @theme {
     /*Colors*/

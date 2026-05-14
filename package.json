@@ -11,6 +11,7 @@
     "generate:schema": "npx -p dotenv-cli dotenv -- sh -c \"directus-sdk-typegen -u ${NUXT_PUBLIC_DIRECTUS_URL} -t ${DIRECTUS_TOKEN} -o ./shared/types/directus.d.ts\""
   },
   "dependencies": {
+    "@dargmuesli/nuxt-cookie-control": "^9.1.24",
     "@directus/sdk": "^20.3.0",
     "@nuxt/image": "^2.0.0",
     "@nuxtjs/seo": "^5.1.3",

@@ -13,6 +13,7 @@ export default defineNuxtConfig({
             '@vueuse/nuxt',
             "@nuxt/image",
             "@vee-validate/nuxt",
+            "@dargmuesli/nuxt-cookie-control",
           ],
   
   runtimeConfig: {
@@ -57,8 +58,9 @@ export default defineNuxtConfig({
         'vue3-toastify',
         'date-fns',
         'date-fns/locale',
+        "@dargmuesli/nuxt-cookie-control",
       ]
-    }
+    } 
   },
 
   css: [
@@ -79,6 +81,57 @@ export default defineNuxtConfig({
 
   ogImage: {
     enabled: false
+  },
+  
+  cookieControl: {
+    locales: ['fr'],
+    barPosition: 'bottom-right',  
+    isControlButtonEnabled: false,
+    colors: {
+      barBackground: 'var(--color-pure-white)',
+      barButtonBackground: 'var(--color-rose-red)',
+      barButtonColor: 'var(--color-pure-white)',
+      barButtonHoverBackground: 'var(--color-dark-navy)',
+      barButtonHoverColor: 'var(--color-pure-white)',
+      barTextColor: 'var(--color-dark-navy)',
+      controlButtonBackground: 'var(--color-rose-red)',
+      controlButtonIconColor: 'var(--color-pure-white)',
+      controlButtonIconHoverColor: 'var(--color-pure-white)',
+      controlButtonHoverBackground: 'var(--color-dark-navy)',
+      modalButtonBackground: 'var(--color-rose-red)',
+      modalButtonColor: 'var(--color-pure-white)',
+      modalButtonHoverBackground: 'var(--color-dark-navy)',
+      modalButtonHoverColor: 'var(--color-pure-white)',
+      modalOverlay: 'var(--color-dark-navy)',
+      modalOverlayColor: 'var(--color-pure-white)',
+      checkboxActiveBackground: 'var(--color-rose-red)',
+      checkboxInactiveBackground: 'var(--color-skin-orange)',
+      checkboxActiveCircleBackground: 'var(--color-pure-white)',
+      checkboxInactiveCircleBackground: 'var(--color-pure-white)',
+    },
+    cookies: {
+      necessary: [
+        {
+          id: 'auth',
+          name: 'Authentification',
+          description: 'Permet de vous maintenir connecté à votre compte Colotracker.',
+          targetCookieIds: ['directus_session_token', 'directus_refresh_token']
+        },
+        {
+          id: 'security',
+          name: 'Sécurité',
+          description: 'Protège le site contre les robots et les envois de formulaires abusifs.',
+          targetCookieIds: ['_GRECAPTCHA']
+        },
+        {
+          id: 'consent',
+          name: 'Gestion du Consentement',
+          description: 'Mémorise vos choix concernant les cookies pour ne pas vous les redemander.',
+          targetCookieIds: ['ncc_c', 'ncc_e']
+        },
+      ],
+      optional: []
+    }
   },
 }
 )

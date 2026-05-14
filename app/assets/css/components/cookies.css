@@ -1,0 +1,14 @@
+.cookieControl__Bar, 
+.cookieControl__BarButtons button,
+.cookieControl__ModalContent,
+.cookieControl__ModalButtons button,
+.cookieControl__ModalClose{
+  font-family: var(--font-poppins) !important;
+  border-radius: 1rem;
+  border: 2px solid var(--color-dark-navy);
+  overflow: hidden;
+}
+
+.cookieControl__Modal h3 {
+  font-family: var(--font-craftygirls) !important;
+}
