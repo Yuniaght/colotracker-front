@@ -1,4 +1,4 @@
-import { createUser, uploadFiles } from '@directus/sdk';
+import { createUser, uploadFiles, updateFile } from '@directus/sdk';
 import { registrationFormConfig } from '~~/server/utils/composables/useRegistrationAttributes';
 import {parseMultiPartData, splitBodyFiles} from "~~/server/utils/composables/parseMultiPartData";
 import * as z from 'zod';
@@ -9,7 +9,6 @@ export default defineEventHandler(async (event) => {
     const form = registrationFormConfig;
 
     const directus = useDirectusAdmin(); 
-    
 
     const _contentType = getRequestHeader(event, 'content-type');
     const contentType = (_contentType || '')?.split(';')[0]?.trim();
@@ -40,6 +39,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const { body: userData, files } = splitBodyFiles(vBody.data, form.filesKeys);
+    const folder = config.avatarFolder
     try {
         let avatarId = null;
         const avatarFile = files.find(f => f && f.data);
@@ -48,7 +48,9 @@ export default defineEventHandler(async (event) => {
           const formData = new FormData();
           
           const blob = new Blob([avatarFile.data], { type: avatarFile.type });
+          formData.append('folder', folder);
           formData.append('file', blob, avatarFile.filename);
+
 
           const fileResponse = await directus.request(uploadFiles(formData));
           avatarId = fileResponse.id;
@@ -59,6 +61,12 @@ export default defineEventHandler(async (event) => {
             role: config.public.userRoleId,
             avatar: avatarId
         }));
+
+        if (avatarId) {
+            await directus.request(updateFile(avatarId, {
+                owned_by: newUser.id
+        }));
+    }
         
         return {
             success: true,

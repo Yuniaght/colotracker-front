@@ -3,12 +3,18 @@ export interface About {
 	id: number;
 	/** @required */
 	main_title: string;
-	sub_title?: string | null;
-	hero_title?: string;
-	Contenu?: Array<{ Texte: string }>;
-	mission_title?: string | null;
-	mission_content?: Array<{ title: string; content: string }>;
-	how_to_title?: string | null;
+	/** @required */
+	sub_title: string;
+	/** @required */
+	hero_title: string;
+	/** @required */
+	Contenu: Array<{ Texte: string }>;
+	/** @required */
+	mission_title: string;
+	/** @required */
+	mission_content: Array<{ title: string; content: string }>;
+	/** @required */
+	how_to_title: string;
 	how_to_content?: Array<{ title: string; content: string }>;
 	faq_section_title?: string | null;
 	faq_content?: Array<{ title: string; content: string }>;
@@ -95,6 +101,27 @@ export interface CompletedPage {
 	date_added?: string | null;
 }
 
+export interface DeletedPage {
+	/** @primaryKey */
+	id: number;
+	/** @required */
+	original_id: number;
+	/** @required */
+	page_number: number;
+	/** @required */
+	detailed_info: string;
+	/** @required */
+	date_finished: string;
+	/** @required */
+	image: DirectusFile | string;
+	/** @required */
+	date_added: string;
+	/** @required */
+	library_from: Library | string;
+	/** @required */
+	date_moderated: string;
+}
+
 export interface DirectusUser {
 	/** @primaryKey */
 	id: string;
@@ -169,7 +196,7 @@ export interface ReportedPage {
 	id: number;
 	reported_page_id?: CompletedPage | string | null;
 	requested_by?: DirectusUser | string | null;
-	status?: 'open' | 'closed' | null;
+	status?: 'open' | 'closed' | 'denied' | null;
 	reason?: string | null;
 	requested_date?: string | null;
 }
@@ -285,6 +312,8 @@ export interface DirectusFile {
 	tus_id?: string | null;
 	tus_data?: 'json' | null;
 	uploaded_on?: string | null;
+	/** @required */
+	owned_by: DirectusUser | string;
 }
 
 export interface DirectusFolder {
@@ -639,6 +668,7 @@ export interface Schema {
 	category_list: CategoryList[];
 	cgu: Cgu;
 	completed_pages: CompletedPage[];
+	deleted_pages: DeletedPage[];
 	directus_users: DirectusUser[];
 	library: Library[];
 	messages: Message[];
@@ -684,6 +714,7 @@ export enum CollectionNames {
 	category_list = 'category_list',
 	cgu = 'cgu',
 	completed_pages = 'completed_pages',
+	deleted_pages = 'deleted_pages',
 	directus_users = 'directus_users',
 	library = 'library',
 	messages = 'messages',

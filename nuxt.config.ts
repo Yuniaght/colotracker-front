@@ -18,6 +18,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     siteURL: process.env.NUXT_PUBLIC_SITE_URL,
     directusAdminToken: process.env.DIRECTUS_TOKEN,
+    avatarFolder: process.env.AVATAR_FOLDER_ID,
+    drawingFolder: process.env.DRAWING_FOLDER_ID,
+    coverFolder: process.env.COVER_FOLDER_ID,
     recaptcha: {
       v3SecretKey: process.env.NUXT_RECAPTCHA_V3_SECRET_KEY
     },
@@ -29,7 +32,7 @@ export default defineNuxtConfig({
       userRoleId: process.env.NUXT_PUBLIC_USER_ROLE_ID,
       recaptcha: {
         v3SiteKey: process.env.NUXT_PUBLIC_RECAPTCHA_V3_SITE_KEY,
-      },
+      }
     }
   },
 

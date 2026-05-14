@@ -8,6 +8,7 @@ import { CompletedPage } from '~~/shared/types/directus';
 export default defineEventHandler(async (event) => {
   const cookies = parseCookies(event);
   const token = cookies['directus_session_token'];
+  const config = useRuntimeConfig()
 
   if (!token) throw createError({ statusCode: 401, message: "Non authentifié" });
 
@@ -70,11 +71,14 @@ export default defineEventHandler(async (event) => {
     });
   }
   const { body: pageData, files } = splitBodyFiles(vBody.data, form.filesKeys);
+  const folder = config.drawingFolder
   try {
     let imageID = null;
     const pageFile = files.find(f => f && f.data);
     const formData = new FormData();
     const blob = new Blob([pageFile.data], { type: pageFile?.type });
+    formData.append('folder', folder)
+    formData.append('owned_by', userMe.id)
     formData.append('file', blob, pageFile?.filename);
     const fileResponse = await directusAdmin.request(uploadFiles(formData));
     imageID = fileResponse.id;

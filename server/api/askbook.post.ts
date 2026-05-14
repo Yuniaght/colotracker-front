@@ -7,6 +7,7 @@ import { AskedBook } from '~~/shared/types/directus';
 
 export default defineEventHandler(async (event) => {
     const form = askABookConfig;
+    const config = useRuntimeConfig()
 
     const directus = useDirectusAdmin(); 
 
@@ -29,11 +30,13 @@ export default defineEventHandler(async (event) => {
         });
     }
     const { body: askedBookData, files } = splitBodyFiles(vBody.data, form.filesKeys);
+    const folder = config.coverFolder
     try {
         let askedBookFrontCoverID = null;
         const askedBookFile = files.find(f => f && f.data);
         const formData = new FormData();
         const blob = new Blob([askedBookFile.data], { type: askedBookFile?.type });
+        formData.append('folder', folder)
         formData.append('file', blob, askedBookFile?.filename);
         const fileResponse = await directus.request(uploadFiles(formData));
         askedBookFrontCoverID = fileResponse.id;
