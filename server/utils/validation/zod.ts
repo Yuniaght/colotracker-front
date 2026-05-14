@@ -57,7 +57,7 @@ export function zMultipleFilesConstructor(options?: {
 
 export function zCaptcha(token: string, minScore = 0.5) {
     return z.string().superRefine(async (val, ctx) => {
-        const response: any = await $fetch(`https://www.recaptcha.net/recaptcha/api/siteverify?secret=${token}&response=${val}`)
+        const response: any = await $fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${token}&response=${val}`)
 
         if (!response.success) {
             ctx.addIssue({ code: 'custom', message: 'Invalid recaptcha token' });
