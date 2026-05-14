@@ -26,6 +26,7 @@ export default defineNuxtConfig({
       v3SecretKey: process.env.NUXT_RECAPTCHA_V3_SECRET_KEY
     },
     public: {
+      publicUrl: process.env.NUXT_PUBLIC_SITE_URL,
       directusUrl: process.env.NUXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055',
       superAdminRoleId: process.env.NUXT_PUBLIC_SUPER_ADMIN_ROLE_ID,
       adminRoleId: process.env.NUXT_PUBLIC_ADMIN_ROLE_ID,
@@ -58,7 +59,10 @@ export default defineNuxtConfig({
         'vue3-toastify',
         'date-fns',
         'date-fns/locale',
-        "@dargmuesli/nuxt-cookie-control",
+        'vue-recaptcha-v3', // CJS
+        'object-to-formdata', // CJS
+        '@vee-validate/zod',
+        'zod',
       ]
     } 
   },
