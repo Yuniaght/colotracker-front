@@ -27,5 +27,7 @@ useHead({
       <NuxtPage />
     </main>
     <appFooter />
+    <CookieControl locale="fr" />
   </div>
+
 </template>
