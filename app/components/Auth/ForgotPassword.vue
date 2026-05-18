@@ -15,8 +15,7 @@ const requestReset = async () => {
   
   try {
     
-    const resetUrl = `${config.siteURL}/reset-password`
-    
+    const resetUrl = `${config.public.publicUrl}/reset-password`
     await $directus.request(passwordRequest(email.value, resetUrl))
 
     status.value = 'success'
