@@ -9,7 +9,7 @@ export const emptyAsNull = (val: unknown) => (val === '' ? null : val);
 
 const registerPartial = zod.object({
   user_name: zod.string("Vous devez remplir mettre un nom utilisateur").min(4, "Votre nom utilisateur doit comprendre au moins 4 caractères").max(100, "Votre nom d'utilisateur ne doit pas dépasser 100 caractères"),
-  password: zod.string("Vous devez rentrer un mot de passe").min(8, "Trop court").max(100, "Trop long").regex(/[a-z]/, "Doit contenir une minuscule").regex(/[A-Z]/, "Doit contenir une majuscule").regex(/[!@#$%^&*]/, "Doit contenir un caractère spécial"),
+  password: zod.string("Vous devez rentrer un mot de passe").min(8, "Trop court").max(100, "Trop long").regex(/[a-z]/, "Doit contenir une minuscule").regex(/[A-Z]/, "Doit contenir une majuscule").regex(/[^a-zA-Z0-9]/, "Doit contenir un caractère spécial"),
   email: zod.email("Entrez un email valide").trim(),
   privacy: zod.coerce.boolean().refine(value => {
         return value;
@@ -52,13 +52,18 @@ const pagePartial = (max_page: number) => zod.object({
 const editProfilePartial = zod.object({
   discord_pseudonym: zod.preprocess(emptyAsNull, zod.string().min(1).nullable()),
   instagram_link: zod.preprocess(emptyAsNull, zod.url().nullable()),
-  password: zod.preprocess(emptyAsNull,zod.string().min(8, "Trop court").max(100, "Trop long").regex(/[a-z]/, "Doit contenir une minuscule").regex(/[A-Z]/, "Doit contenir une majuscule").regex(/[!@#$%^&*]/, "Doit contenir un caractère spécial").nullable()),
+  password: zod.preprocess(emptyAsNull,zod.string().min(8, "Trop court").max(100, "Trop long").regex(/[a-z]/, "Doit contenir une minuscule").regex(/[A-Z]/, "Doit contenir une majuscule").regex(/[^a-zA-Z0-9]/, "Doit contenir un caractère spécial").nullable()),
   confirm_password: zod.preprocess(emptyAsNull,zod.string().nullable()),
   delete_avatar: zod.preprocess((val) => val === 'true' || val === true, zod.boolean().optional().default(false))
 })
 
 const reportPagePartial = zod.object({
   reason: zod.string("Vous devez entrer un justificatif de signalement").min(1, "Vous devez entrer un justificatif de signalement")
+})
+
+const forgotPassword = zod.object({
+  password: zod.string("Vous devez rentrer un mot de passe").min(8, "Trop court").max(100, "Trop long").regex(/[a-z]/, "Doit contenir une minuscule").regex(/[A-Z]/, "Doit contenir une majuscule").regex(/[^a-zA-Z0-9]/, "Doit contenir un caractère spécial"),
+  confirm_password: zod.string(),
 })
 
 export const zodShared = {
@@ -69,4 +74,5 @@ export const zodShared = {
   pagePartial,
   editProfilePartial,
   reportPagePartial,
+  forgotPassword,
 }
