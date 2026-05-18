@@ -28,6 +28,7 @@ useHead({
     </main>
     <appFooter />
     <CookieControl locale="fr" />
+    <ModalAuthModal />
   </div>
 
 </template>

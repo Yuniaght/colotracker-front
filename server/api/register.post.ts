@@ -3,6 +3,12 @@ import { registrationFormConfig } from '~~/server/utils/composables/useRegistrat
 import {parseMultiPartData, splitBodyFiles} from "~~/server/utils/composables/parseMultiPartData";
 import * as z from 'zod';
 import type {ZodError} from "zod";
+import { randomUUID } from 'node:crypto';
+import nodemailer from 'nodemailer';
+import fs from 'node:fs';
+import path from 'node:path';
+
+
 const config = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
@@ -39,6 +45,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const { body: userData, files } = splitBodyFiles(vBody.data, form.filesKeys);
+    delete userData.token
     const folder = config.avatarFolder
     try {
         let avatarId = null;
@@ -55,18 +62,43 @@ export default defineEventHandler(async (event) => {
           const fileResponse = await directus.request(uploadFiles(formData));
           avatarId = fileResponse.id;
         }
-        
+        const verificationToken = randomUUID()
+        const expiresAt = new Date()
+        expiresAt.setHours(expiresAt.getHours() + 24)
+
         const newUser = await directus.request(createUser({
             ...userData,
             role: config.public.userRoleId,
-            avatar: avatarId
+            avatar: avatarId,
+            status: "unverified",
+            verification_token: verificationToken,
+            verif_token_expires_at: expiresAt.toISOString(),
         }));
 
         if (avatarId) {
             await directus.request(updateFile(avatarId, {
                 owned_by: newUser.id
-        }));
-    }
+            }));
+        }
+
+        const templatePath = path.resolve('server/utils/mails/verification.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+        const verificationLink = `${config.siteURL}/verify-email?token=${verificationToken}`;
+        htmlContent = htmlContent.replace('{{verificationLink}}', verificationLink);
+
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST || '127.0.0.1', //
+            port: parseInt(process.env.SMTP_PORT || '1025'),
+            secure: false,
+            ignoreTLS: true
+        });
+
+        await transporter.sendMail({
+            from: '"ColoTracker" <noreply@colotracker.local>',
+            to: userData.email,
+            subject: "Vérifiez votre adresse e-mail - ColoTracker",
+            html: htmlContent
+        });
         
         return {
             success: true,
@@ -75,6 +107,7 @@ export default defineEventHandler(async (event) => {
         };
 
     } catch (e: any) {
+        console.log(e)
 
         let globalMsg = "Une erreur est survenue lors de l'inscription.";
         let fieldError: Record<string, string[]> = {};

@@ -97,11 +97,10 @@ export default defineEventHandler(async (event) => {
       ...pageData,
       page_number: Number(pageData.page_number),
     };
-
     if (pageFile) {
       const formData = new FormData();
       const blob = new Blob([pageFile.data], { type: pageFile?.type });
-      formData.append('folder', folder)
+      // formData.append('folder', folder)
       formData.append('owned_by', userMe.id)
       formData.append('file', blob, pageFile?.filename);
       const fileResponse = await directusAdmin.request(uploadFiles(formData));
