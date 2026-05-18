@@ -5,6 +5,7 @@ const isOpen = ref(false)
 const isProfileOpen = ref(false)
 const profileRef = ref(null)
 const mobileMenuRef = ref(null)
+const { openModal } = useAuthModal();
 
 onClickOutside(profileRef, () => {
   isProfileOpen.value = false
@@ -80,7 +81,8 @@ const directusAccessAuth = computed (() => {
             </li>
 
             <li v-if="!user">
-              <AppLink :to="{name: 'login' }">Connexion</AppLink>
+              <nuxt-link @click="openModal('login')" class="pr-4 hover:text-rose-red transition-colors duration-300 cursor-pointer">Connexion</nuxt-link>
+              <nuxt-link @click="openModal('register')" class="hover:text-rose-red transition-colors duration-300 cursor-pointer">S'inscrire</nuxt-link>
             </li>
 
             <li v-else class="relative" ref="profileRef">
@@ -135,8 +137,8 @@ const directusAccessAuth = computed (() => {
           </div>
           <AppLink v-for="link in publicLink" :key="link.path" @click="isOpen = false" :to="link.path">{{ link.name }}</AppLink>
           <template v-if="!user">
-            <AppLink @click="isOpen = false" to="/login">Connexion</AppLink>
-            <AppLink @click="isOpen = false" to="/register">S'inscrire</AppLink>
+            <nuxt-link @click="isOpen = false; openModal('login')">Connexion</nuxt-link>
+            <nuxt-link @click="isOpen = false; openModal('register')">S'inscrire</nuxt-link>
           </template>
           <template v-if="user">
             <button @click="$logout(); isOpen = false">Déconnexion</button>

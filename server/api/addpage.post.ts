@@ -72,6 +72,8 @@ export default defineEventHandler(async (event) => {
   }
   const { body: pageData, files } = splitBodyFiles(vBody.data, form.filesKeys);
   const folder = config.drawingFolder
+
+  console.log("dossier : " + folder)
   try {
     let imageID = null;
     const pageFile = files.find(f => f && f.data);
@@ -96,6 +98,7 @@ export default defineEventHandler(async (event) => {
     };
 
   } catch (e: any) {
+    console.log(e)
     let globalMsg = "Une erreur est survenue lors de la demande.";
     throw createError({
       statusCode: 400,

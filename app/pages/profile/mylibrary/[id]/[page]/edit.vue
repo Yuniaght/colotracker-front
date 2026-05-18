@@ -100,6 +100,7 @@ const submitForm = handleSubmit(async (values) => {
     navigateTo({ name: 'profile-mylibrary-id-page', params: {id: id, page: response.newPage}})
 
   } catch (e: any) {
+    console.error(e)
     if (e.data?.data) {
        setErrors(e.data.data)
     }

@@ -19,7 +19,7 @@ const registerPartial = zod.object({
 const askABookPartial = zod.object({
   book_name: zod.string("Le nom du livre est requis").min(1, "Le nom du livre est requis").max(100, "Le nom du livre ne peut dépasser 100 caractères"),
   author: zod.string("Le nom complet de l'auteur/éditeur est requis").min(1, "Le nom complet de l'auteur/éditeur est requis").max(100, "Le nom complet de l'auteur/éditeur ne peut dépasser 100 caractères"),
-  page_count: zod.coerce.bigint("Le nombre doit être un entier").positive("Le nombre doit être positif"),
+  page_count: zod.number().int("Le nombre doit être un entier").positive("Le nombre doit être positif"),
   release_date: zod.coerce.date("Entrez une date au format valide : yyyy-mm-dd"),
   store_link: zod.url("Entrez une url valide"),
   privacy: zod.coerce.boolean().refine(value => {
@@ -44,7 +44,7 @@ const problemUrlContactPartial = zod.object({
 })
 
 const pagePartial = (max_page: number) => zod.object({
-  page_number: zod.coerce.bigint("Le chiffre doit être un entier").positive("Le N° de page doit être possitif").refine((val) => val <= Number(max_page), { message: `Le numéro de page ne peut pas dépasser ${max_page}` }),
+  page_number: zod.number().int("Le chiffre doit être un entier").positive("Le N° de page doit être possitif").refine((val) => val <= Number(max_page), { message: `Le numéro de page ne peut pas dépasser ${max_page}` }),
   date_finished: zod.coerce.date("Veuillez entrer une date valide").max(new Date, "La date ne peut pas être dans le futur"),
   detailed_info: zod.string().min(1, "Vous devez décrire votre oeuvre"),
 })

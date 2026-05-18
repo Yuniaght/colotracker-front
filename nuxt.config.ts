@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     siteURL: process.env.NUXT_PUBLIC_SITE_URL,
     directusAdminToken: process.env.DIRECTUS_TOKEN,
     avatarFolder: process.env.AVATAR_FOLDER_ID,
-    drawingFolder: process.env.DRAWING_FOLDER_ID,
+    drawingFolder: process.env.DRAWINGS_FOLDER_ID,
     coverFolder: process.env.COVER_FOLDER_ID,
     recaptcha: {
       v3SecretKey: process.env.NUXT_RECAPTCHA_V3_SECRET_KEY

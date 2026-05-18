@@ -44,7 +44,6 @@
                       condition générale d'utilisation
                     </nuxt-link>
     </InputCheckbox>
-    <button type="submit">S'inscrire</button>
 </template>
 <style scoped>
 </style>
