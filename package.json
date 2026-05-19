@@ -8,7 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "generate:schema": "npx -p dotenv-cli dotenv -- sh -c \"directus-sdk-typegen -u ${NUXT_PUBLIC_DIRECTUS_URL} -t ${DIRECTUS_TOKEN} -o ./shared/types/directus.d.ts\""
+    "generate:schema": "npx -p dotenv-cli dotenv -- sh -c \"directus-sdk-typegen -u ${NUXT_PUBLIC_DIRECTUS_URL} -t ${DIRECTUS_TOKEN} -o ./shared/types/directus.d.ts\"",
+    "test": "vitest"
   },
   "dependencies": {
     "@dargmuesli/nuxt-cookie-control": "^9.1.24",
@@ -38,7 +39,8 @@
     "cross-var": "^1.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "directus-sdk-typegen": "^0.2.1",
-    "dotenv-cli": "^11.0.0"
+    "dotenv-cli": "^11.0.0",
+    "vitest": "^4.1.6"
   },
   "config": {
     "commitizen": {
